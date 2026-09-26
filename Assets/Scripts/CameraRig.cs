@@ -50,6 +50,13 @@ namespace Gluttony
             }
             blastFrom = float.NaN;
 
+            if (cat != null && cat.Settling)
+            {
+                Settle(cat.SettleY, dt);
+                Apply();
+                return;
+            }
+
             float lead = 0f;
             if (cat != null && !cat.InIntro)
             {
@@ -71,6 +78,14 @@ namespace Gluttony
                 preciseY = Mathf.Max(preciseY, next);
             }
             Apply();
+        }
+
+        private void Settle(float groundY, float dt)
+        {
+            float target = groundY + HalfHeight * (1f - 2f * StartScreenFraction);
+            if (dt > 0f)
+                preciseY = Mathf.SmoothDamp(preciseY, target, ref velocity, SmoothTime, Mathf.Infinity, dt);
+            targetY = preciseY;
         }
 
         private void FollowLaunch(CatController cat, double beats)

@@ -123,6 +123,9 @@ namespace Gluttony
         public double BlastStartBeat => motionStart;
         public double CruiseStartBeat => motionStart + blastBeats;
         public float CruiseStartY { get; private set; }
+        public bool OnTable => Grounded && Ground != null && Ground.Kind == PlatformKind.Landing;
+        public bool Settling => afterLaunch || OnTable;
+        public float SettleY => afterLaunch ? tableY : transform.position.y;
         public Vector2 BodyCenter => (Vector2)transform.position + new Vector2(0f, BodyHeight * 0.5f);
         public Rect BodyRect => new Rect(transform.position.x - HalfWidth, transform.position.y, HalfWidth * 2f, BodyHeight);
 
@@ -198,6 +201,7 @@ namespace Gluttony
         private int nextGhost;
         private double lastGhostBeat = double.NegativeInfinity;
         private float lineBudget;
+        private float tableY;
 
         private void Awake()
         {
@@ -797,6 +801,7 @@ namespace Gluttony
             p.y = apex;
             State = CatState.Airborne;
             afterLaunch = true;
+            tableY = apex - TableDrop;
             double apexBeat = CruiseStartBeat + cruiseBeats + BrakeBeats;
             BeginMotion(apexBeat, apex, 0f, 2f * TableDrop / (TableFallBeats * TableFallBeats));
             landSoundBeat = apexBeat + TableFallBeats;

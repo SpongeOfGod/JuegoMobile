@@ -29,6 +29,7 @@ namespace Gluttony
         [SerializeField] private Backdrop backdrop;
         [SerializeField] private ScoreManager score;
         [SerializeField] private GameUI ui;
+        [SerializeField] private PopupManager popups;
 
         [SerializeField] private float restartSeconds = 1.2f;
 
@@ -38,7 +39,6 @@ namespace Gluttony
         public int Section { get; private set; }
 
         private bool hasJumped;
-        private FloatingText comboPopup;
 
         private void Awake()
         {
@@ -159,8 +159,7 @@ namespace Gluttony
             music.SetMood(cat.IsLaunching ? MusicMood.Flight : MusicMood.Climb);
             music.SetNearness(MovingNearness());
 
-            bool resting = cat.Grounded && cat.Ground != null && cat.Ground.Kind == PlatformKind.Landing;
-            cameraRig.Creeping = hasJumped && !resting && !cat.IsLaunching;
+            cameraRig.Creeping = hasJumped && !cat.Settling && !cat.IsLaunching;
 
             if (!cat.InIntro && cat.transform.position.y < cameraRig.Bottom - FallMargin)
                 EndRun(true);
@@ -203,13 +202,13 @@ namespace Gluttony
             if (caught)
                 cameraRig.Shake(1, 0.06f);
             else
-                ui.Popup("¡AIRE!", cat.transform.position + Vector3.up * 3.4f, Palette.White);
+                popups.Show(PopupId.Whiff, cat.transform.position);
         }
 
         private void OnChargeMissed(bool early)
         {
             if (State == GameState.Playing)
-                ui.Popup(early ? "¡ANTES!" : "¡TARDE!", cat.transform.position + Vector3.up * 1.4f, Palette.Red);
+                popups.Show(early ? PopupId.Early : PopupId.Late, cat.transform.position);
         }
 
         private void OnIntroImpact()
@@ -217,7 +216,7 @@ namespace Gluttony
             if (State != GameState.Playing)
                 return;
             cameraRig.Shake(2, 0.12f);
-            ui.Popup("¡PLAF!", cat.transform.position + Vector3.up * 1.2f, Palette.White, 2);
+            popups.Show(PopupId.Splat, cat.transform.position);
         }
 
         private void OnIntroFinished()
@@ -248,15 +247,14 @@ namespace Gluttony
                 return;
             if (backdrop != null)
                 backdrop.Flash(0.06f);
-            comboPopup = ui.Popup("X" + count, at + Vector3.right * 0.8f, Palette.Red, 2, comboPopup);
+            popups.Show(PopupId.Combo, at, count);
         }
 
         private void OnBitten(int index, int points, Vector3 mouth)
         {
             if (State != GameState.Playing)
                 return;
-            float side = index % 2 == 0 ? 0.6f : -0.6f;
-            ui.Popup("+" + points, mouth + new Vector3(side, 0.6f, 0f), index % 2 == 0 ? Palette.White : Palette.Red);
+            popups.Show(PopupId.Bite, mouth, points, index % 2 == 1);
         }
 
         private void OnFeasted(int count, int points)
@@ -266,8 +264,8 @@ namespace Gluttony
             if (backdrop != null)
                 backdrop.Flash(0.12f);
             cameraRig.Shake(1, 0.12f);
-            ui.Popup("¡ÑAM! X" + count, cat.transform.position + Vector3.up * 2.6f, Palette.Red, 2);
-            ui.Popup("+" + points, cat.transform.position + Vector3.up * 1.8f, Palette.White);
+            popups.Show(PopupId.Feast, cat.transform.position, count);
+            popups.Show(PopupId.FeastPoints, cat.transform.position, points);
         }
 
         private void OnDied() => EndRun(false);

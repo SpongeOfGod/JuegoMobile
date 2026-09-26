@@ -53,7 +53,7 @@ namespace Gluttony
                 if (best != shownBest)
                 {
                     shownBest = best;
-                    bestText.Text = "RÉCORD " + best;
+                    bestText.Text = PopupManager.Instance != null ? PopupManager.Instance.Record(best) : best.ToString();
                 }
             }
 
