@@ -7,6 +7,8 @@ namespace Gluttony
     public class Conductor : MonoBehaviour
     {
         private const float PulseBeats = 0.3f;
+        private const double MaxDriftSeconds = 0.1;
+        private const double ResyncSeconds = 0.25;
 
         public static Conductor Instance { get; private set; }
 
@@ -45,6 +47,7 @@ namespace Gluttony
         private double pausedAtDsp;
         private bool pausedBeforeMusic;
         private int lastBeatFired;
+        private bool audioChanged;
 
         private void Awake()
         {
@@ -61,6 +64,12 @@ namespace Gluttony
             if (Instance == this)
                 Instance = null;
         }
+
+        private void OnEnable() => AudioSettings.OnAudioConfigurationChanged += OnAudioChanged;
+
+        private void OnDisable() => AudioSettings.OnAudioConfigurationChanged -= OnAudioChanged;
+
+        private void OnAudioChanged(bool deviceWasChanged) => audioChanged = true;
 
         public void StartSong(double leadBeats = 0.0)
         {
@@ -105,6 +114,16 @@ namespace Gluttony
                 music.UnPause();
         }
 
+        private void Resync(double raw)
+        {
+            audioChanged = false;
+            dspStart += raw - SongTime;
+            lastDsp = -1;
+            if (music != null)
+                music.Seek(dspStart);
+            Sfx.Reschedule();
+        }
+
         public double DspAtBeat(double beat) => dspStart + firstBeatSeconds + beat * SecondsPerBeat;
 
         public double OffsetToNearestBeat(double songTime, out int nearestBeat)
@@ -126,9 +145,12 @@ namespace Gluttony
                 lastDsp = dsp;
                 realtimeAtLastDsp = now;
             }
-            double raw = (lastDsp - dspStart) + (now - realtimeAtLastDsp) - firstBeatSeconds;
             double latency = outputLatencyMs / 1000.0;
-            SongTime = Math.Max(SongTime, raw - latency);
+            double raw = (lastDsp - dspStart) + Math.Min(now - realtimeAtLastDsp, MaxDriftSeconds) - firstBeatSeconds - latency;
+            if (audioChanged || raw < SongTime - ResyncSeconds)
+                Resync(raw);
+            else
+                SongTime = Math.Max(SongTime, raw);
 
             int beat = CurrentBeat;
             if (beat - lastBeatFired > 4)

@@ -79,6 +79,26 @@ namespace Gluttony
                 source.UnPause();
         }
 
+        public void Seek(double startDsp)
+        {
+            if (sources == null)
+                return;
+            double position = AudioSettings.dspTime - startDsp;
+            foreach (var source in sources)
+            {
+                if (source.clip == null)
+                    continue;
+                source.Stop();
+                if (position < 0.0)
+                {
+                    source.PlayScheduled(startDsp);
+                    continue;
+                }
+                source.time = (float)(position % source.clip.length);
+                source.Play();
+            }
+        }
+
         public void SetNearness(float value) => nearness = Mathf.Clamp01(value);
 
         public void SetMood(MusicMood value, bool instant = false)

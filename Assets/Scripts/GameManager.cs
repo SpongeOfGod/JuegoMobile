@@ -310,5 +310,13 @@ namespace Gluttony
             if (paused)
                 Pause();
         }
+
+#if !UNITY_EDITOR
+        private void OnApplicationFocus(bool focused)
+        {
+            if (!focused)
+                Pause();
+        }
+#endif
     }
 }

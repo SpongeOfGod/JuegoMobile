@@ -201,6 +201,23 @@ namespace Gluttony
                 PlayAtBeat(sound.Id, sound.Beat, sound.Pitch, sound.Volume);
         }
 
+        public static void Reschedule()
+        {
+            if (instance == null || Conductor.Instance == null)
+                return;
+            double beats = Conductor.Instance.SongBeats;
+            for (int i = 0; i < instance.pool.Length; i++)
+            {
+                double beat = instance.voiceBeats[i];
+                if (double.IsNaN(beat) || beat <= beats || instance.voicePaused[i])
+                    continue;
+                instance.pool[i].Stop();
+                instance.busyUntil[i] = 0.0;
+                instance.startsAt[i] = 0.0;
+                PlayAtBeat(instance.voiceIds[i], beat, instance.voicePitches[i], instance.voiceVolumes[i]);
+            }
+        }
+
         public static void CancelScheduled()
         {
             if (instance == null)

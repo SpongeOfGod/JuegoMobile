@@ -4,7 +4,7 @@ namespace Gluttony
 {
     public class ScoreManager : MonoBehaviour
     {
-        private const string BestKey = "record";
+        public const string BestKey = "record";
 
         public static ScoreManager Instance { get; private set; }
 
