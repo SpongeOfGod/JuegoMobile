@@ -153,7 +153,7 @@ namespace Gluttony
                 double at = firstBite + bite;
                 int size = Mathf.CeilToInt((count - eaten) / (float)(biteCount - bite));
                 Sfx.PlayAtBeat(SfxId.Eat, at);
-                Sfx.PlayAtBeat(SfxId.Chew, at + ChewBeat, 1f, 0.7f);
+                Sfx.PlayAtBeat(SfxId.Chew, at + ChewBeat);
                 while (Beats < at)
                     yield return null;
                 items.RemoveRange(Mathf.Max(0, items.Count - size), Mathf.Min(size, items.Count));

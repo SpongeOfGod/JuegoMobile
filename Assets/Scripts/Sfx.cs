@@ -109,10 +109,13 @@ namespace Gluttony
             {
                 if (entry == null || entry.clip == null)
                     continue;
-                resolved[(int)entry.id] = Smoothed(entry.clip, ClipFadeSeconds);
+                resolved[(int)entry.id] = entry.id == SfxId.Stab ? entry.clip : Smoothed(entry.clip, ClipFadeSeconds);
                 transpose[(int)entry.id] = 1f;
                 gains[(int)entry.id] = entry.volume;
             }
+
+            for (int i = 0; i < count; i++)
+                resolved[i] = Balanced(resolved[i], (SfxId)i == SfxId.Skewer ? 0.2f : 0.126f, (SfxId)i == SfxId.Skewer ? 0.89f : 0.708f);
 
             wind = gameObject.AddComponent<AudioSource>();
             wind.playOnAwake = false;
@@ -270,6 +273,44 @@ namespace Gluttony
             startsAt[pick] = start;
             busyUntil[pick] = start + clip.length / Mathf.Max(0.1f, pitch);
             return new SfxHandle { Voice = pick, Start = start };
+        }
+
+        private static AudioClip Balanced(AudioClip clip, float targetRms, float peakCeiling)
+        {
+            if (clip == null)
+                return clip;
+            if (clip.loadState != AudioDataLoadState.Loaded)
+                clip.LoadAudioData();
+            var data = new float[clip.samples * clip.channels];
+            if (!clip.GetData(data, 0))
+                return clip;
+            int window = Mathf.Max(1, clip.frequency / 50);
+            float loudest = 0f;
+            float peak = 0f;
+            for (int i = 0; i < data.Length; i++)
+                peak = Mathf.Max(peak, Mathf.Abs(data[i]));
+            for (int start = 0; start < clip.samples; start += window)
+                loudest = Mathf.Max(loudest, Rms(data, clip.channels, start, Mathf.Min(window, clip.samples - start)));
+            if (loudest < 0.00001f)
+                return clip;
+            double energy = 0.0;
+            int activeFrames = 0;
+            for (int start = 0; start < clip.samples; start += window)
+            {
+                int length = Mathf.Min(window, clip.samples - start);
+                float rms = Rms(data, clip.channels, start, length);
+                if (rms < loudest * 0.1f)
+                    continue;
+                energy += rms * rms * length;
+                activeFrames += length;
+            }
+            float activeRms = (float)Math.Sqrt(energy / Math.Max(1, activeFrames));
+            float gain = Mathf.Min(targetRms / Mathf.Max(activeRms, 0.00001f), peakCeiling / Mathf.Max(peak, 0.00001f));
+            for (int i = 0; i < data.Length; i++)
+                data[i] *= gain;
+            var copy = AudioClip.Create(clip.name + "_balanced", clip.samples, clip.channels, clip.frequency, false);
+            copy.SetData(data, 0);
+            return copy;
         }
 
         private static AudioClip Smoothed(AudioClip clip, float fadeSeconds)

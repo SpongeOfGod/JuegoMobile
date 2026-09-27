@@ -160,7 +160,6 @@ namespace Gluttony
         private double missUntil = double.NegativeInfinity;
         private double squashUntil = double.NegativeInfinity;
         private double landSoundBeat = double.NaN;
-        private double launchSoundBeat = double.NaN;
         private double motionStart;
         private float motionY;
         private float motionVelocity;
@@ -233,14 +232,12 @@ namespace Gluttony
         private void OnEnable()
         {
             Input.HoldReleased += OnHoldReleased;
-            Input.Pressed += OnPressed;
             Input.Swiped += OnSwiped;
         }
 
         private void OnDisable()
         {
             Input.HoldReleased -= OnHoldReleased;
-            Input.Pressed -= OnPressed;
             Input.Swiped -= OnSwiped;
             Sfx.Wind(0f);
         }
@@ -262,7 +259,6 @@ namespace Gluttony
             missUntil = double.NegativeInfinity;
             squashUntil = double.NegativeInfinity;
             landSoundBeat = double.NaN;
-            launchSoundBeat = double.NaN;
             lastTickBeat = double.NegativeInfinity;
             lastVisualTick = double.NegativeInfinity;
             shakeUntil = double.NegativeInfinity;
@@ -313,11 +309,11 @@ namespace Gluttony
             if (looseFork != null)
                 looseFork.enabled = true;
             Sfx.PlayAtBeat(SfxId.Land, startBeat + 1.0, 0.8f);
-            Sfx.PlayAtBeat(SfxId.Stab, startBeat + 1.0, 0.5f);
-            Sfx.PlayAtBeat(SfxId.Stab, startBeat + 2.0, 0.8f);
-            Sfx.PlayAtBeat(SfxId.Stab, startBeat + 3.0, 0.9f);
+            Sfx.PlayAtBeat(SfxId.Stab, startBeat + 1.0);
+            Sfx.PlayAtBeat(SfxId.Stab, startBeat + 2.0);
+            Sfx.PlayAtBeat(SfxId.Stab, startBeat + 3.0);
             Sfx.PlayAtBeat(SfxId.Flip, startBeat + 3.0);
-            Sfx.PlayAtBeat(SfxId.Stab, startBeat + 3.5, 1.2f);
+            Sfx.PlayAtBeat(SfxId.Stab, startBeat + 3.5);
             Sfx.PlayAtBeat(SfxId.Land, startBeat + 4.0);
         }
 
@@ -449,7 +445,7 @@ namespace Gluttony
                 {
                     tossHits = hop + 1;
                     Fx.Sparks(to, 8 - 2 * hop);
-                    Sfx.Play(SfxId.Stab, 1f - 0.1f * hop, 0.8f - 0.2f * hop);
+                    Sfx.Play(SfxId.Stab, 1f, 0.8f - 0.2f * hop);
                 }
                 from = to;
                 height *= 0.3f;
@@ -578,12 +574,6 @@ namespace Gluttony
             }
         }
 
-        private void OnPressed()
-        {
-            if (ControlEnabled)
-                Sfx.Play(SfxId.Touch);
-        }
-
         private void OnSwiped(int dir)
         {
             if (!ControlEnabled || Eating || InIntro)
@@ -622,7 +612,10 @@ namespace Gluttony
             slideStart = Time.time;
             bumpStart = float.NegativeInfinity;
             FacingRight = dir > 0;
-            Sfx.Play(SfxId.Dash);
+            var conductor = Conductor.Instance;
+            int beat = conductor != null && conductor.IsRunning ? Math.Max(0, conductor.CurrentBeat) % 4 : 0;
+            int note = beat == 1 ? 2 : beat == 2 ? 3 : beat == 3 ? 1 : 0;
+            Sfx.Play(SfxId.Dash, Sfx.Note(note));
             if (Grounded)
                 Fx.Dust(transform.position, 3, 0.8f);
         }
@@ -951,11 +944,6 @@ namespace Gluttony
                 pullY = headY - (Skewer.PawY + 2) * Unit;
                 State = CatState.Stabbing;
                 Sfx.PlayAtBeat(SfxId.Flip, start + jumpDuration * 0.5);
-                if (target.Kind == PlatformKind.Launch)
-                {
-                    Sfx.PlayAtBeat(SfxId.Launch, landBeat);
-                    launchSoundBeat = landBeat;
-                }
                 Fx.Sparks(new Vector3(headX, underside, 0f), 10);
                 Stabbed?.Invoke(true);
             }
@@ -1063,9 +1051,6 @@ namespace Gluttony
             afterLaunch = false;
             restX = p.x;
             lastStreakY = pad.Top;
-            if (double.IsNaN(launchSoundBeat) || Math.Abs(beats - launchSoundBeat) > 0.3)
-                Sfx.Play(SfxId.Launch);
-            launchSoundBeat = double.NaN;
             Fx.Burst(p, Palette.Red, 20);
             Fx.Ring(p, Palette.White, 20, 9f);
             Launched?.Invoke(pad, cruiseStart);

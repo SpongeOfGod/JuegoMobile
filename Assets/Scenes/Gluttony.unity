@@ -1073,8 +1073,8 @@ MonoBehaviour:
   - name: Moving platform snare
     clip: {fileID: 8300000, guid: bb76edfabb7bd4cc080c4d7f3450fff3, type: 3}
     cue: 1
-    volume: 0.9
-  volume: 0.8
+    volume: 0.3
+  volume: 0.4
   fadeSeconds: 0.8
 --- !u!114 &909038887
 MonoBehaviour:
@@ -3276,69 +3276,69 @@ MonoBehaviour:
   clips:
   - id: 0
     clip: {fileID: 8300000, guid: da513a1a65cdd5bd944e6a8887ab1260, type: 3}
-    volume: 1
+    volume: 0.45
   - id: 2
-    clip: {fileID: 8300000, guid: 08bd83129893825bbb07e42c659c0701, type: 3}
-    volume: 1
+    clip: {fileID: 8300000, guid: 15af0a5a59274a059f519dc429521086, type: 3}
+    volume: 0.65
   - id: 3
     clip: {fileID: 8300000, guid: 13cb96e3d5e47e1ac78ded56921d5cb4, type: 3}
-    volume: 1
+    volume: 0.7
   - id: 4
-    clip: {fileID: 8300000, guid: 5bf123ab0a18f0c90c9c81fbae6bfd0e, type: 3}
-    volume: 1
+    clip: {fileID: 8300000, guid: bacbd23fa3c647e480cb802e87946557, type: 3}
+    volume: 0.85
   - id: 5
     clip: {fileID: 8300000, guid: ce69d843d8ff84b429c4b9b16de156f4, type: 3}
-    volume: 1
+    volume: 0.85
   - id: 6
     clip: {fileID: 8300000, guid: 806e0472d16d4426989127633c15a0be, type: 3}
     volume: 1
   - id: 7
     clip: {fileID: 8300000, guid: 209c61f2f4b54f929e4642464f04a9e6, type: 3}
-    volume: 1
+    volume: 0.72
   - id: 8
     clip: {fileID: 8300000, guid: 96fbe37fa35d458696be505d1c27ce95, type: 3}
-    volume: 1
+    volume: 0.4
   - id: 9
-    clip: {fileID: 8300000, guid: 9333d5665f030caffd382214e60eaf6a, type: 3}
-    volume: 1
+    clip: {fileID: 8300000, guid: 40029c01ebda421093deb59b3fd93c1b, type: 3}
+    volume: 0.8
   - id: 10
     clip: {fileID: 8300000, guid: f9672790f79d21e941745ce2fe316a4d, type: 3}
-    volume: 1
+    volume: 0.65
   - id: 11
     clip: {fileID: 8300000, guid: 1f2488dd183161d910160e4dcced1bc4, type: 3}
-    volume: 1
+    volume: 0.85
   - id: 12
     clip: {fileID: 8300000, guid: 6f83685767481fa9284a17616a18d1e5, type: 3}
-    volume: 1
+    volume: 0.9
   - id: 13
     clip: {fileID: 8300000, guid: 9f4675ac5a029132cd3d1eef0d8673a8, type: 3}
-    volume: 1
+    volume: 0.45
   - id: 15
     clip: {fileID: 8300000, guid: c6d2a22f354098e04e48704e247136ab, type: 3}
-    volume: 1
+    volume: 0.7
   - id: 16
     clip: {fileID: 8300000, guid: ecf7318f63cdda13c51153acfc592ac2, type: 3}
-    volume: 1
+    volume: 0.55
   - id: 17
     clip: {fileID: 8300000, guid: 5f52822f36fd0bb4eaa9f81ca4c1d0ab, type: 3}
-    volume: 0.5
+    volume: 0.8
   - id: 18
     clip: {fileID: 8300000, guid: 106cef56500cf084c8209179d1836c43, type: 3}
-    volume: 0.5
+    volume: 0.8
   - id: 19
     clip: {fileID: 8300000, guid: 2223af4c06a2a464290b32af0d9783b0, type: 3}
-    volume: 0.5
+    volume: 0.8
   - id: 20
     clip: {fileID: 8300000, guid: 76ee66e7339e5f345823c61fb7e51b1c, type: 3}
-    volume: 0.5
+    volume: 0.9
   - id: 21
-    clip: {fileID: 8300000, guid: 528a617ab43db72a672baef92612eb22, type: 3}
-    volume: 1
+    clip: {fileID: 8300000, guid: 688b3b8bf0bb4d779599a3eb52722fcc, type: 3}
+    volume: 0.24
   - id: 22
     clip: {fileID: 8300000, guid: 5cb67a33606d705e3e2ab7a449728c29, type: 3}
-    volume: 0.4
+    volume: 0.2
   volume: 1
-  windVolume: 0.3
+  windVolume: 0.12
   windClip: {fileID: 8300000, guid: baab779ccba43d31e72e91486d7512dc, type: 3}
 --- !u!114 &1912036221
 MonoBehaviour:
