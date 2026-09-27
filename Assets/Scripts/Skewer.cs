@@ -37,6 +37,8 @@ namespace Gluttony
         private const float LockRange = 14f;
         private const float SlideBeats = 0.1f;
         private const float ThrustBeats = 0.25f;
+        private const float BiteHoldBeats = 0.08f;
+        private const double ChewBeat = 0.5;
         private const float Unit = 1f / PixelPerfectRig.PixelsPerUnit;
 
         [SerializeField] private Transform stackRoot;
@@ -74,7 +76,7 @@ namespace Gluttony
                 int k = (int)Math.Floor(rel + ThrustBeats);
                 double u = rel - k;
                 if (k < biteCount)
-                    return u < 0.0 ? MouthState.Open : u < 0.5 ? MouthState.Full : MouthState.Chew;
+                    return u < 0.0 ? MouthState.Open : u < ChewBeat ? MouthState.Full : MouthState.Chew;
                 if (k == biteCount)
                     return u < 0.0 ? MouthState.Full : u < 0.25 ? MouthState.Open : MouthState.Idle;
                 return MouthState.Idle;
@@ -143,7 +145,7 @@ namespace Gluttony
             int count = items.Count;
             biteCount = Mathf.Min(count, TineSlots);
             bitesTaken = 0;
-            firstBite = Math.Floor(Beats) + 1.0;
+            firstBite = Math.Ceiling(Beats + ThrustBeats);
             int eaten = 0;
             int total = 0;
             for (int bite = 0; bite < biteCount; bite++)
@@ -151,7 +153,7 @@ namespace Gluttony
                 double at = firstBite + bite;
                 int size = Mathf.CeilToInt((count - eaten) / (float)(biteCount - bite));
                 Sfx.PlayAtBeat(SfxId.Eat, at);
-                Sfx.PlayAtBeat(SfxId.Chew, at + 0.5);
+                Sfx.PlayAtBeat(SfxId.Chew, at + ChewBeat, 1f, 0.7f);
                 while (Beats < at)
                     yield return null;
                 items.RemoveRange(Mathf.Max(0, items.Count - size), Mathf.Min(size, items.Count));
@@ -165,7 +167,7 @@ namespace Gluttony
                 var mouth = MouthPoint;
                 Fx.Burst(mouth, Palette.White, 8);
                 Bitten?.Invoke(bite, points, mouth);
-                while (Beats < at + 0.5)
+                while (Beats < at + ChewBeat)
                     yield return null;
                 Fx.Dust(MouthPoint, 3, 0.6f);
             }
@@ -229,7 +231,7 @@ namespace Gluttony
                     continue;
                 enemy.Committed = true;
                 committed.Add(enemy);
-                Sfx.PlayAtBeat(SfxId.Skewer, impact, Sfx.Note(items.Count + committed.Count - 1));
+                Sfx.PlayAtBeat(SfxId.Skewer, impact, Sfx.Note(Mathf.Min(items.Count + committed.Count - 1, 4)));
             }
         }
 
@@ -335,9 +337,11 @@ namespace Gluttony
                 float t = (float)((u + ThrustBeats) / ThrustBeats);
                 return Mathf.RoundToInt(reach * t * t);
             }
+            if (u < BiteHoldBeats)
+                return reach;
             if (u < ThrustBeats)
             {
-                float t = 1f - (float)(u / ThrustBeats);
+                float t = 1f - (float)((u - BiteHoldBeats) / (ThrustBeats - BiteHoldBeats));
                 return Mathf.RoundToInt(reach * t * t);
             }
             return 0;
