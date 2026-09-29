@@ -27,6 +27,7 @@ namespace Gluttony
 
         private Particle[] particles;
         private SpriteRenderer[] renderers;
+        private Transform[] particleTransforms;
         private int count;
 
         private void Awake()
@@ -34,6 +35,7 @@ namespace Gluttony
             instance = this;
             particles = new Particle[Capacity];
             renderers = new SpriteRenderer[Capacity];
+            particleTransforms = new Transform[Capacity];
             for (int i = 0; i < Capacity; i++)
             {
                 var go = new GameObject("Particle");
@@ -45,6 +47,7 @@ namespace Gluttony
                 renderer.sortingOrder = SortingOrder;
                 renderer.enabled = false;
                 renderers[i] = renderer;
+                particleTransforms[i] = go.transform;
             }
         }
 
@@ -137,7 +140,7 @@ namespace Gluttony
         {
             var renderer = renderers[i];
             renderer.color = particles[i].Color;
-            renderer.transform.localScale = new Vector3(particles[i].Size, particles[i].Height, 1f);
+            particleTransforms[i].localScale = new Vector3(particles[i].Size, particles[i].Height, 1f);
             renderer.enabled = true;
             Place(i);
         }
@@ -145,7 +148,7 @@ namespace Gluttony
         private void Place(int i)
         {
             Vector2 p = particles[i].Position;
-            renderers[i].transform.position = new Vector3(
+            particleTransforms[i].position = new Vector3(
                 Mathf.Floor(p.x * PixelPerfectRig.PixelsPerUnit) / PixelPerfectRig.PixelsPerUnit,
                 Mathf.Floor(p.y * PixelPerfectRig.PixelsPerUnit) / PixelPerfectRig.PixelsPerUnit, 0f);
         }

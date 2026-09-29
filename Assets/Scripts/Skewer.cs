@@ -70,15 +70,26 @@ namespace Gluttony
             {
                 if (!Eating || double.IsNaN(firstBite))
                     return MouthState.Idle;
-                double rel = Beats - firstBite;
-                if (rel < -ThrustBeats)
+                double elapsedBeats = Beats - firstBite;
+                if (elapsedBeats < -ThrustBeats)
                     return MouthState.Idle;
-                int k = (int)Math.Floor(rel + ThrustBeats);
-                double u = rel - k;
-                if (k < biteCount)
-                    return u < 0.0 ? MouthState.Open : u < ChewBeat ? MouthState.Full : MouthState.Chew;
-                if (k == biteCount)
-                    return u < 0.0 ? MouthState.Full : u < 0.25 ? MouthState.Open : MouthState.Idle;
+                int biteIndex = (int)Math.Floor(elapsedBeats + ThrustBeats);
+                double biteProgress = elapsedBeats - biteIndex;
+                if (biteIndex < biteCount)
+                {
+                    if (biteProgress < 0.0)
+                        return MouthState.Open;
+                    if (biteProgress < ChewBeat)
+                        return MouthState.Full;
+                    return MouthState.Chew;
+                }
+                if (biteIndex == biteCount)
+                {
+                    if (biteProgress < 0.0)
+                        return MouthState.Full;
+                    if (biteProgress < 0.25)
+                        return MouthState.Open;
+                }
                 return MouthState.Idle;
             }
         }
@@ -98,7 +109,21 @@ namespace Gluttony
         private static double Beats => Conductor.Instance != null ? Conductor.Instance.SongBeats : 0.0;
         private int OverheadShaftX => cat.FacingRight ? OverheadX : -OverheadX - 1;
         private int ShaftX => cat.Pose == TridentPose.Overhead ? OverheadShaftX : SideShaftX;
-        private int ShaftBase => cat.Pose == TridentPose.Overhead ? OverheadY : cat.Pose == TridentPose.Thrust ? PawY - GripPixels + CatController.ThrustPixels : Mathf.Max(0, PawY - GripPixels - cat.CrouchPixels);
+        private int ShaftBase
+        {
+            get
+            {
+                switch (cat.Pose)
+                {
+                    case TridentPose.Overhead:
+                        return OverheadY;
+                    case TridentPose.Thrust:
+                        return PawY - GripPixels + CatController.ThrustPixels;
+                    default:
+                        return Mathf.Max(0, PawY - GripPixels - cat.CrouchPixels);
+                }
+            }
+        }
         private float ForkCenterX => cat.transform.position.x + (ShaftX + 0.5f) * Unit;
         private Vector3 MouthPoint => cat.transform.position + new Vector3(0f, (FeedY + 1.5f) * Unit, 0f);
 
@@ -326,23 +351,23 @@ namespace Gluttony
         {
             if (double.IsNaN(firstBite))
                 return 0;
-            double rel = Beats - firstBite;
-            int k = (int)Math.Floor(rel + ThrustBeats);
-            if (k < 0 || k >= biteCount)
+            double elapsedBeats = Beats - firstBite;
+            int biteIndex = (int)Math.Floor(elapsedBeats + ThrustBeats);
+            if (biteIndex < 0 || biteIndex >= biteCount)
                 return 0;
-            double u = rel - k;
+            double biteProgress = elapsedBeats - biteIndex;
             int reach = FeedRestX - FeedMouthX;
-            if (u < 0.0)
+            if (biteProgress < 0.0)
             {
-                float t = (float)((u + ThrustBeats) / ThrustBeats);
-                return Mathf.RoundToInt(reach * t * t);
+                float extension = (float)((biteProgress + ThrustBeats) / ThrustBeats);
+                return Mathf.RoundToInt(reach * extension * extension);
             }
-            if (u < BiteHoldBeats)
+            if (biteProgress < BiteHoldBeats)
                 return reach;
-            if (u < ThrustBeats)
+            if (biteProgress < ThrustBeats)
             {
-                float t = 1f - (float)((u - BiteHoldBeats) / (ThrustBeats - BiteHoldBeats));
-                return Mathf.RoundToInt(reach * t * t);
+                float extension = 1f - (float)((biteProgress - BiteHoldBeats) / (ThrustBeats - BiteHoldBeats));
+                return Mathf.RoundToInt(reach * extension * extension);
             }
             return 0;
         }
@@ -411,7 +436,13 @@ namespace Gluttony
                 if (!on)
                     continue;
                 int bottom = HeadPixels - 1 - ChunkPixels - i * SlotPitch + (i >= offsetFrom ? offset : 0);
-                Vector2Int along = quarter == 0 ? new Vector2Int(0, bottom) : quarter > 0 ? new Vector2Int(-bottom, 0) : new Vector2Int(bottom, 0);
+                Vector2Int along;
+                if (quarter == 0)
+                    along = new Vector2Int(0, bottom);
+                else if (quarter > 0)
+                    along = new Vector2Int(-bottom, 0);
+                else
+                    along = new Vector2Int(bottom, 0);
                 int index = items.Count - 1 - i;
                 chunks[i].sprite = index >= 0 ? items[index] : chunkSprite;
                 chunks[i].sortingOrder = ChunkSortingOrder;

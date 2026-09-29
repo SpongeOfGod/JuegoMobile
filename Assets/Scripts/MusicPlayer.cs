@@ -108,12 +108,12 @@ namespace Gluttony
                 return;
             for (int i = 0; i < layers.Length; i++)
             {
-                levels[i] = Wanted(layers[i]);
-                Apply(i);
+                levels[i] = GetTargetLevel(layers[i]);
+                ApplyLayerVolume(i);
             }
         }
 
-        private float Wanted(MusicLayer layer)
+        private float GetTargetLevel(MusicLayer layer)
         {
             if (mood == MusicMood.Silent)
                 return 0f;
@@ -122,7 +122,10 @@ namespace Gluttony
             return 1f;
         }
 
-        private void Apply(int i) => sources[i].volume = levels[i] * layers[i].volume * volume;
+        private void ApplyLayerVolume(int layerIndex)
+        {
+            sources[layerIndex].volume = levels[layerIndex] * layers[layerIndex].volume * volume;
+        }
 
         private void Update()
         {
@@ -132,8 +135,8 @@ namespace Gluttony
             float step = Time.unscaledDeltaTime / Mathf.Max(0.01f, seconds);
             for (int i = 0; i < layers.Length; i++)
             {
-                levels[i] = Mathf.MoveTowards(levels[i], Wanted(layers[i]), step);
-                Apply(i);
+                levels[i] = Mathf.MoveTowards(levels[i], GetTargetLevel(layers[i]), step);
+                ApplyLayerVolume(i);
             }
         }
     }

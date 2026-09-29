@@ -520,7 +520,28 @@ namespace Gluttony
             UpdateTrail(beats, dt, p);
             if (tossing)
                 UpdateToss();
-            Sfx.Wind(State == CatState.Blasting ? 1f : State == CatState.Launching ? 0.75f : State == CatState.Braking ? 0.35f : 0f);
+            UpdateWindSound();
+        }
+
+        private void UpdateWindSound()
+        {
+            float windLevel;
+            switch (State)
+            {
+                case CatState.Blasting:
+                    windLevel = 1f;
+                    break;
+                case CatState.Launching:
+                    windLevel = 0.75f;
+                    break;
+                case CatState.Braking:
+                    windLevel = 0.35f;
+                    break;
+                default:
+                    windLevel = 0f;
+                    break;
+            }
+            Sfx.Wind(windLevel);
         }
 
         private void UpdateTrail(double beats, float dt, Vector3 p)
@@ -614,7 +635,22 @@ namespace Gluttony
             FacingRight = dir > 0;
             var conductor = Conductor.Instance;
             int beat = conductor != null && conductor.IsRunning ? Math.Max(0, conductor.CurrentBeat) % 4 : 0;
-            int note = beat == 1 ? 2 : beat == 2 ? 3 : beat == 3 ? 1 : 0;
+            int note;
+            switch (beat)
+            {
+                case 1:
+                    note = 2;
+                    break;
+                case 2:
+                    note = 3;
+                    break;
+                case 3:
+                    note = 1;
+                    break;
+                default:
+                    note = 0;
+                    break;
+            }
             Sfx.Play(SfxId.Dash, Sfx.Note(note));
             if (Grounded)
                 Fx.Dust(transform.position, 3, 0.8f);
@@ -834,7 +870,12 @@ namespace Gluttony
             else
             {
                 double cycle = rel - Math.Floor(rel / Cycle) * Cycle;
-                ChargeLevel = InReleaseWindow ? chargeBeats : cycle < chargeBeats ? (int)Math.Floor(cycle) + 1 : 0;
+                if (InReleaseWindow)
+                    ChargeLevel = chargeBeats;
+                else if (cycle < chargeBeats)
+                    ChargeLevel = (int)Math.Floor(cycle) + 1;
+                else
+                    ChargeLevel = 0;
             }
 
             double from = Math.Max(chargeStart, Math.Floor(beats));
@@ -858,7 +899,18 @@ namespace Gluttony
 
         private int Phase(double beat) => Mod((int)Math.Round(beat - chargeStart), Cycle);
 
-        private static SfxId ChargeSound(int phase) => phase == 0 ? SfxId.Charge1 : phase == 1 ? SfxId.Charge2 : SfxId.Charge3;
+        private static SfxId ChargeSound(int phase)
+        {
+            switch (phase)
+            {
+                case 0:
+                    return SfxId.Charge1;
+                case 1:
+                    return SfxId.Charge2;
+                default:
+                    return SfxId.Charge3;
+            }
+        }
 
         private double ReleaseOffset(double rel)
         {

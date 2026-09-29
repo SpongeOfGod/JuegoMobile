@@ -56,6 +56,7 @@ namespace Gluttony
         private string lastPattern;
         private Platform waitingPad;
         private readonly List<float> landings = new List<float>();
+        private readonly int[] laneCandidates = new int[Lanes.Count];
 
         public int SectionAt(float y)
         {
@@ -454,11 +455,13 @@ namespace Gluttony
         private int OtherLane(int lane, bool wide)
         {
             int reach = wide ? 2 : 1;
-            var candidates = new List<int>();
+            int candidateCount = 0;
             for (int l = 0; l < Lanes.Count; l++)
+            {
                 if (l != lane && Mathf.Abs(l - lane) <= reach)
-                    candidates.Add(l);
-            return candidates[rng.Next(candidates.Count)];
+                    laneCandidates[candidateCount++] = l;
+            }
+            return laneCandidates[rng.Next(candidateCount)];
         }
 
         private static void AddBar(List<double> hits, List<double> rests, string pattern, int offset)

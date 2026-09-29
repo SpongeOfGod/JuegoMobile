@@ -13,6 +13,11 @@ namespace Gluttony
         [SerializeField] private Color shadowColor = Color.black;
         [SerializeField] private bool shrinkToFit = true;
 
+        private string cachedText;
+        private string[] cachedLines;
+        private int[] cachedLineWidths;
+        private int widestLine;
+
         public string Text
         {
             get => text;
@@ -30,12 +35,33 @@ namespace Gluttony
             get => scale;
             set
             {
-                scale = Mathf.Max(1, value);
+                int newScale = Mathf.Max(1, value);
+                if (scale == newScale)
+                    return;
+                scale = newScale;
                 SetVerticesDirty();
             }
         }
 
         public override Texture mainTexture => PixelFont.Texture;
+
+        private void PrepareText()
+        {
+            if (cachedText == text && cachedLines != null)
+                return;
+
+            cachedText = text;
+            cachedLines = text.ToUpperInvariant().Split('\n');
+            if (cachedLineWidths == null || cachedLineWidths.Length != cachedLines.Length)
+                cachedLineWidths = new int[cachedLines.Length];
+
+            widestLine = 0;
+            for (int i = 0; i < cachedLines.Length; i++)
+            {
+                cachedLineWidths[i] = PixelFont.MeasureLine(cachedLines[i]);
+                widestLine = Mathf.Max(widestLine, cachedLineWidths[i]);
+            }
+        }
 
         protected override void OnPopulateMesh(VertexHelper vh)
         {
@@ -43,28 +69,38 @@ namespace Gluttony
             if (string.IsNullOrEmpty(text))
                 return;
 
-            string[] lines = text.ToUpperInvariant().Split('\n');
+            PrepareText();
+            string[] lines = cachedLines;
             Rect rect = rectTransform.rect;
             int size = Mathf.Max(1, scale);
-            int widest = 0;
-            foreach (string line in lines)
-                widest = Mathf.Max(widest, PixelFont.MeasureLine(line));
-            while (shrinkToFit && size > 1 && widest * size > rect.width)
+            while (shrinkToFit && size > 1 && widestLine * size > rect.width)
                 size--;
 
             int lineAdvance = (PixelFont.CapHeight + 3) * size;
             int blockHeight = PixelFont.CapHeight * size + (lines.Length - 1) * lineAdvance;
             int row = (int)alignment / 3;
             int column = (int)alignment % 3;
-            float top = row == 0 ? rect.yMax : row == 1 ? rect.center.y + blockHeight * 0.5f : rect.yMin + blockHeight;
+            float top;
+            if (row == 0)
+                top = rect.yMax;
+            else if (row == 1)
+                top = rect.center.y + blockHeight * 0.5f;
+            else
+                top = rect.yMin + blockHeight;
             top = Mathf.Floor(top);
             Color32 main = new Color(1f, 1f, 1f, color.a);
             Color32 dark = new Color(shadowColor.r, shadowColor.g, shadowColor.b, shadowColor.a * color.a);
 
             for (int i = 0; i < lines.Length; i++)
             {
-                int width = PixelFont.MeasureLine(lines[i]) * size;
-                float left = column == 0 ? rect.xMin : column == 1 ? rect.center.x - width * 0.5f : rect.xMax - width;
+                int width = cachedLineWidths[i] * size;
+                float left;
+                if (column == 0)
+                    left = rect.xMin;
+                else if (column == 1)
+                    left = rect.center.x - width * 0.5f;
+                else
+                    left = rect.xMax - width;
                 float x = Mathf.Floor(left);
                 float baseline = top - PixelFont.CapHeight * size - i * lineAdvance;
                 foreach (char c in lines[i])
