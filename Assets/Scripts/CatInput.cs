@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.EnhancedTouch;
 using Finger = UnityEngine.InputSystem.EnhancedTouch.Finger;
 using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
+using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 namespace Gluttony
 {
@@ -68,7 +69,15 @@ namespace Gluttony
 
         private void OnFingerDown(Finger finger) => PointerDown(finger.index, finger.screenPosition);
         private void OnFingerMove(Finger finger) => PointerMove(finger.index, finger.screenPosition);
-        private void OnFingerUp(Finger finger) => PointerUp(finger.index, finger.screenPosition);
+        private void OnFingerUp(Finger finger)
+        {
+            if (finger.lastTouch.phase == TouchPhase.Canceled)
+            {
+                PointerCancel(finger.index);
+                return;
+            }
+            PointerUp(finger.index, finger.screenPosition);
+        }
 
         private void Update()
         {
@@ -128,6 +137,19 @@ namespace Gluttony
             if (Mathf.Abs(delta.x) < swipeDistance * scale * Mathf.Max(1, Screen.width) || Mathf.Abs(delta.x) < Mathf.Abs(delta.y))
                 return 0;
             return delta.x > 0f ? 1 : -1;
+        }
+
+        public void PointerCancel(int id)
+        {
+            if (ignoredPointers.Remove(id) || id != primaryId)
+                return;
+
+            primaryId = -1;
+            Current = Gesture.None;
+            primaryStart = Vector2.zero;
+            FingerScreen = Vector2.zero;
+            AnchorScreen = Vector2.zero;
+            PressedAt = 0f;
         }
 
         public void PointerUp(int id, Vector2 screenPos)
