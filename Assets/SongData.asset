@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33a6975234be0f34e99441586cfed5cf, type: 3}
+  m_Name: SongData
+  m_EditorClassIdentifier: 
+  AllSongs:
+  - songName: LIVVI TRAILER
+    cost: 1.99
+    ID: Song1
+  - songName: VATRA LITTLEMIX
+    cost: 2.99
+    ID: Song2
+  - songName: ITERUM BOSS MUSIC
+    cost: 3.99
+    ID: Song3
