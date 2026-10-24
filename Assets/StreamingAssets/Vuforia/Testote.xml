@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig>
+  <Tracking>
+    <ImageTarget name="primeape" size="1.000000 1.390501" />
+    <ImageTarget name="lucario" size="1.000000 1.396648" />
+    <ImageTarget name="mankey" size="1.000000 1.391304" />
+    <ImageTarget name="charcadet" size="1.000000 1.396648" />
+  </Tracking>
+</QCARConfig>
