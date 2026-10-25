@@ -5,10 +5,11 @@ using UnityEngine;
 
 public class UnlockManager : MonoBehaviour
 {
-    HashSet<string> unlockedCards = new();
+    List<string> unlockedCards = new();
     [SerializeField] PixelLabel MonsterName;
     [SerializeField] PixelLabel UnlockedMonsters;
     [SerializeField] string UnlockedMonstersText;
+    public List<string> UnlockedCards => unlockedCards;
     public void UnlockCard(string cardName) 
     {
         if (unlockedCards.Contains(cardName))

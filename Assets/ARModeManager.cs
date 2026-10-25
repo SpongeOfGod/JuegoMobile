@@ -5,8 +5,8 @@ public class ARModeManager : MonoBehaviour
 {
     enum currentMode {scanning, placing }
     currentMode CurrentMode;
-    [SerializeField] GameObject ScanningOBJ;
-    [SerializeField] GameObject PlacingOBJ;
+    [SerializeField] GameObject[] ScanningObjects;
+    [SerializeField] GameObject[] PlacingObjects;
     [SerializeField] Image ButtonSprite;
     [SerializeField] Sprite ScanningSprite;
     [SerializeField] Sprite PlacingSprite;
@@ -14,9 +14,11 @@ public class ARModeManager : MonoBehaviour
     public void SwitchModes() 
     {
         CurrentMode = CurrentMode == currentMode.scanning ? currentMode.placing : currentMode.scanning;
-        bool scanning = CurrentMode == currentMode.placing;
+        bool scanning = CurrentMode == currentMode.scanning;
         ButtonSprite.sprite = scanning ? ScanningSprite : PlacingSprite;
-        ScanningOBJ.SetActive(scanning);
-        PlacingOBJ.SetActive(!scanning);
+        for (int i = 0; i < ScanningObjects.Length; i++)
+            ScanningObjects[i].SetActive(scanning);
+        for (int i = 0; i < PlacingObjects.Length; i++)
+            PlacingObjects[i].SetActive(!scanning);
     }
 }
