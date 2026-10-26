@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig>
+  <Tracking>
+    <ImageTarget name="stc_crouched" size="1.000000 1.165179" />
+    <ImageTarget name="stc_eating" size="1.000000 1.165179" />
+    <ImageTarget name="stc_rounded" size="1.000000 1.165179" />
+    <ImageTarget name="stc_smiley" size="1.000000 1.165179" />
+  </Tracking>
+</QCARConfig>

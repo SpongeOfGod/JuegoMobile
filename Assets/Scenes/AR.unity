@@ -156,7 +156,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: -38.5}
+  m_AnchoredPosition: {x: 0, y: -38.500008}
   m_SizeDelta: {x: 0.49996948, y: 100}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &104115651
@@ -929,7 +929,7 @@ MonoBehaviour:
   - {fileID: 442305239}
   ButtonSprite: {fileID: 296074764}
   ScanningSprite: {fileID: -1608545128, guid: 0484af0b02ccf994889f26c76d2c7fa9, type: 3}
-  PlacingSprite: {fileID: -92130944, guid: 0484af0b02ccf994889f26c76d2c7fa9, type: 3}
+  PlacingSprite: {fileID: -1180641720, guid: 0484af0b02ccf994889f26c76d2c7fa9, type: 3}
 --- !u!1 &638684686
 GameObject:
   m_ObjectHideFlags: 0
@@ -1627,13 +1627,13 @@ MonoBehaviour:
   PreviewVisible: 1
   RuntimeOcclusion: 0
   RuntimeCollider: 0
-  mTrackableName: mankey
+  mTrackableName: stc_eating
   mInitializedInEditor: 1
-  mDataSetPath: Vuforia/Testote.xml
-  mAspectRatio: 1.391304
+  mDataSetPath: Vuforia/Gluttony.xml
+  mAspectRatio: 1.165179
   mImageTargetType: 0
   mWidth: 1
-  mHeight: 1.391304
+  mHeight: 1.165179
   mRuntimeTexture: {fileID: 0}
   mMotionHint: 1
   mTrackingOptimization: 0
@@ -1669,8 +1669,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mObserverBehaviour: {fileID: 1047692458}
   mHiddenRoot: {fileID: 0}
-  mTargetName: mankey
-  mDatasetName: Vuforia/Testote.xml
+  mTargetName: stc_eating
+  mDatasetName: Vuforia/Gluttony.xml
   mCastedBehaviour: {fileID: 1047692458}
   mMeshFilter: {fileID: 0}
   mMeshRenderer: {fileID: 0}
@@ -1886,13 +1886,13 @@ MonoBehaviour:
   PreviewVisible: 1
   RuntimeOcclusion: 0
   RuntimeCollider: 0
-  mTrackableName: charcadet
+  mTrackableName: stc_crouched
   mInitializedInEditor: 1
-  mDataSetPath: Vuforia/Testote.xml
-  mAspectRatio: 1.396648
+  mDataSetPath: Vuforia/Gluttony.xml
+  mAspectRatio: 1.165179
   mImageTargetType: 0
   mWidth: 1
-  mHeight: 1.396648
+  mHeight: 1.165179
   mRuntimeTexture: {fileID: 0}
   mMotionHint: 1
   mTrackingOptimization: 0
@@ -1928,8 +1928,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mObserverBehaviour: {fileID: 1216420194}
   mHiddenRoot: {fileID: 0}
-  mTargetName: charcadet
-  mDatasetName: Vuforia/Testote.xml
+  mTargetName: stc_crouched
+  mDatasetName: Vuforia/Gluttony.xml
   mCastedBehaviour: {fileID: 1216420194}
   mMeshFilter: {fileID: 0}
   mMeshRenderer: {fileID: 0}
@@ -2429,13 +2429,13 @@ MonoBehaviour:
   PreviewVisible: 1
   RuntimeOcclusion: 0
   RuntimeCollider: 0
-  mTrackableName: lucario
+  mTrackableName: stc_rounded
   mInitializedInEditor: 1
-  mDataSetPath: Vuforia/Testote.xml
-  mAspectRatio: 1.396648
+  mDataSetPath: Vuforia/Gluttony.xml
+  mAspectRatio: 1.165179
   mImageTargetType: 0
   mWidth: 1
-  mHeight: 1.396648
+  mHeight: 1.165179
   mRuntimeTexture: {fileID: 0}
   mMotionHint: 1
   mTrackingOptimization: 0
@@ -2471,8 +2471,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mObserverBehaviour: {fileID: 1378957941}
   mHiddenRoot: {fileID: 0}
-  mTargetName: lucario
-  mDatasetName: Vuforia/Testote.xml
+  mTargetName: stc_rounded
+  mDatasetName: Vuforia/Gluttony.xml
   mCastedBehaviour: {fileID: 1378957941}
   mMeshFilter: {fileID: 0}
   mMeshRenderer: {fileID: 0}
@@ -2997,13 +2997,13 @@ MonoBehaviour:
   PreviewVisible: 1
   RuntimeOcclusion: 0
   RuntimeCollider: 0
-  mTrackableName: primeape
+  mTrackableName: stc_smiley
   mInitializedInEditor: 1
-  mDataSetPath: Vuforia/Testote.xml
-  mAspectRatio: 1.390501
+  mDataSetPath: Vuforia/Gluttony.xml
+  mAspectRatio: 1.165179
   mImageTargetType: 0
   mWidth: 1
-  mHeight: 1.390501
+  mHeight: 1.165179
   mRuntimeTexture: {fileID: 0}
   mMotionHint: 1
   mTrackingOptimization: 0
@@ -3052,8 +3052,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mObserverBehaviour: {fileID: 1571843684}
   mHiddenRoot: {fileID: 0}
-  mTargetName: primeape
-  mDatasetName: Vuforia/Testote.xml
+  mTargetName: stc_smiley
+  mDatasetName: Vuforia/Gluttony.xml
   mCastedBehaviour: {fileID: 1571843684}
   mMeshFilter: {fileID: 0}
   mMeshRenderer: {fileID: 0}
