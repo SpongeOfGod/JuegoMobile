@@ -12,4 +12,5 @@ public class Song
     public string songName;
     public float cost;
     public string ID;
+    [HideInInspector] public bool freeTrial;
 }
