@@ -12,7 +12,11 @@ namespace Gluttony
         [SerializeField] private PixelLabel bestText;
         [SerializeField] private Image livesImage;
         [SerializeField] private Sprite[] livesSprites;
+        [SerializeField] private Sprite[] greenLivesSprites;
         [SerializeField] private Button pauseButton;
+        [SerializeField] private Button menuButton;
+        [SerializeField] private Button settingsButton;
+        [SerializeField] private PixelLabel songLabel;
         [SerializeField] private CatHealth health;
 
         private int shownScore = -1;
@@ -29,9 +33,9 @@ namespace Gluttony
             scoreHome = scoreText.rectTransform.anchoredPosition;
             livesHome = livesImage.rectTransform.anchoredPosition;
             pauseHome = pauseRect.anchoredPosition;
+            menuButton.onClick.AddListener(() => GameManager.Instance.QuitToMenu());
             pauseButton.onClick.AddListener(() =>
             {
-                Sfx.Play(SfxId.Click);
                 if (GameManager.Instance.State == GameState.Paused)
                     GameManager.Instance.Resume();
                 else
@@ -62,13 +66,20 @@ namespace Gluttony
                 shownLives = health.Lives;
                 livesImage.enabled = shownLives > 0;
                 if (shownLives > 0)
-                    livesImage.sprite = livesSprites[Mathf.Clamp(shownLives - 1, 0, livesSprites.Length - 1)];
+                    livesImage.sprite = (GameManager.Instance.GreenRun ? greenLivesSprites : livesSprites)[Mathf.Clamp(shownLives - 1, 0, livesSprites.Length - 1)];
             }
 
             var game = GameManager.Instance;
+            if (game != null)
+                songLabel.Text = game.NowPlaying;
             bool paused = game != null && game.State == GameState.Paused;
             bool dim = paused && Mathf.Repeat(Time.unscaledTime * 2f, 1f) >= 0.5f;
             pauseButton.targetGraphic.color = dim ? new Color(1f, 1f, 1f, 0.25f) : Color.white;
+            if (menuButton.gameObject.activeSelf != paused)
+            {
+                menuButton.gameObject.SetActive(paused);
+                settingsButton.gameObject.SetActive(paused);
+            }
 
             int icon = Conductor.Bounce(IconBounce);
             scoreText.rectTransform.anchoredPosition = scoreHome + Vector2.up * Conductor.Bounce(ScoreBounce);

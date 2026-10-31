@@ -32,7 +32,6 @@ namespace Gluttony
         private const int FeedRestX = 8;
         private const int FeedMouthX = -1;
         private const int FeedY = 7;
-        private const int ChunkSortingOrder = 8;
         private const float AlignRange = 0.25f;
         private const float LockRange = 14f;
         private const float SlideBeats = 0.1f;
@@ -43,6 +42,8 @@ namespace Gluttony
 
         [SerializeField] private Transform stackRoot;
         [SerializeField] private SpriteRenderer shaft;
+        [SerializeField] private SpriteRenderer point;
+        [SerializeField] private SpriteRenderer[] chunks = new SpriteRenderer[0];
         [SerializeField] private SpriteRenderer head;
         [SerializeField] private SpriteRenderer lockMarker;
 
@@ -96,7 +97,6 @@ namespace Gluttony
 
         private CatController cat;
         private readonly List<Sprite> items = new List<Sprite>();
-        private readonly List<SpriteRenderer> chunks = new List<SpriteRenderer>();
         private readonly List<Enemy> committed = new List<Enemy>();
         private double lastTake = double.NegativeInfinity;
         private double lastBite = double.NegativeInfinity;
@@ -104,7 +104,6 @@ namespace Gluttony
         private int biteCount;
         private int bitesTaken;
         private Sprite chunkSprite;
-        private SpriteRenderer point;
 
         private static double Beats => Conductor.Instance != null ? Conductor.Instance.SongBeats : 0.0;
         private int OverheadShaftX => cat.FacingRight ? OverheadX : -OverheadX - 1;
@@ -130,13 +129,6 @@ namespace Gluttony
         private void Awake()
         {
             cat = GetComponent<CatController>();
-            var go = new GameObject("ForkTip");
-            go.transform.SetParent(shaft.transform.parent, false);
-            point = go.AddComponent<SpriteRenderer>();
-            point.sprite = shaft.sprite;
-            point.sharedMaterial = shaft.sharedMaterial;
-            point.sortingOrder = shaft.sortingOrder;
-            point.enabled = false;
         }
         private void OnEnable() => cat.Landed += OnLanded;
         private void OnDisable() => cat.Landed -= OnLanded;
@@ -427,9 +419,8 @@ namespace Gluttony
 
         private void PlaceChunks(int count, Vector2Int headPixel, int quarter, int offset, int offsetFrom)
         {
-            EnsureChunks(count);
             var rotation = Quaternion.Euler(0f, 0f, 90f * quarter);
-            for (int i = 0; i < chunks.Count; i++)
+            for (int i = 0; i < chunks.Length; i++)
             {
                 bool on = i < count;
                 chunks[i].enabled = on;
@@ -445,21 +436,8 @@ namespace Gluttony
                     along = new Vector2Int(bottom, 0);
                 int index = items.Count - 1 - i;
                 chunks[i].sprite = index >= 0 ? items[index] : chunkSprite;
-                chunks[i].sortingOrder = ChunkSortingOrder;
                 chunks[i].transform.localRotation = rotation;
                 chunks[i].transform.localPosition = Pixel(headPixel.x + along.x, headPixel.y + along.y);
-            }
-        }
-
-        private void EnsureChunks(int count)
-        {
-            while (chunks.Count < count)
-            {
-                var go = new GameObject("Chunk");
-                go.transform.SetParent(stackRoot, false);
-                var renderer = go.AddComponent<SpriteRenderer>();
-                renderer.sharedMaterial = shaft.sharedMaterial;
-                chunks.Add(renderer);
             }
         }
 

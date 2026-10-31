@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+using UnityEngine.SceneManagement;
 
 namespace Gluttony
 {
@@ -17,6 +20,15 @@ namespace Gluttony
         private const float IntroLeadBeats = 0.6f;
         private const float MovingNear = 0.5f;
         private const float MovingFar = 8f;
+        private const int MenuSceneIndex = 0;
+        private const string TutorialSongId = "TutorialSong";
+        private const string MainSongId = "ChasingStars";
+        private const string FinalSongId = "AQuickAdvance";
+        private const int TutorialCheckpoints = 2;
+        private const float TutorialFadeSeconds = 1.5f;
+        private const int FinalSongCheckpoint = 13;
+        private const float ScorePerDoubleRate = 5000f;
+        private const float RateStep = 0.01f;
 
         public static GameManager Instance { get; private set; }
 
@@ -30,6 +42,9 @@ namespace Gluttony
         [SerializeField] private ScoreManager score;
         [SerializeField] private GameUI ui;
         [SerializeField] private PopupManager popups;
+        [SerializeField] private SongScriptableObject library;
+        [SerializeField] private UnityEngine.UI.Image screenFade;
+        [SerializeField] private Volume songTint;
 
         [SerializeField] private float restartSeconds = 1.2f;
 
@@ -37,12 +52,21 @@ namespace Gluttony
 
         public GameState State { get; private set; } = GameState.Playing;
         public int Section { get; private set; }
+        public bool GreenRun { get; private set; }
+        public string NowPlaying => normalRun && playing != null ? playing.songName : "";
+        public bool TutorialActive => normalRun && playing != null && playing.ID == TutorialSongId;
+        public int Checkpoints => checkpoints;
 
         private bool hasJumped;
+        private string currentSongId;
+        private Song playing;
+        private bool normalRun;
+        private int checkpoints;
 
         private void Awake()
         {
             Instance = this;
+            MenuMusic.Release();
             Application.targetFrameRate = 60;
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
             if (backdrop == null)
@@ -86,8 +110,9 @@ namespace Gluttony
         public void StartRun()
         {
             ResumeClock();
+            PickSong();
             PrepareWorld(Environment.TickCount);
-            score.BeginRun(cat.transform.position.y);
+            score.BeginRun(cat.transform.position.y, currentSongId);
             cat.SetControl(false);
             SetState(GameState.Playing);
             ui.ShowHud();
@@ -95,6 +120,32 @@ namespace Gluttony
             music.SetNearness(0f);
             music.SetMood(MusicMood.Climb, true);
             cat.BeginIntro(-CatController.IntroBeats, cameraRig.Top + 1.5f);
+        }
+
+        private void PickSong()
+        {
+            normalRun = string.IsNullOrEmpty(SongStore.RunSongId);
+            checkpoints = 0;
+            var song = normalRun
+                ? SongStore.Find(library, SongStore.TutorialDone ? MainSongId : TutorialSongId)
+                : SongStore.RunSong(library);
+            playing = song;
+            currentSongId = normalRun ? MainSongId : song.ID;
+            if (normalRun)
+            {
+                SongStore.Find(library, MainSongId).clip.LoadAudioData();
+                SongStore.Find(library, FinalSongId).clip.LoadAudioData();
+            }
+            if (backdrop != null)
+                backdrop.SetSong(song);
+            if (song.redToGreen && !GreenRun)
+            {
+                GreenRun = true;
+                cameraRig.Camera.GetUniversalAdditionalCameraData().renderPostProcessing = true;
+                songTint.gameObject.SetActive(true);
+            }
+            conductor.Configure(song.bpm, song.firstBeatSeconds);
+            music.SetSong(song);
         }
 
         public void Pause()
@@ -118,6 +169,14 @@ namespace Gluttony
             SetState(GameState.Playing);
         }
 
+        public void QuitToMenu()
+        {
+            score.Commit();
+            Time.timeScale = 1f;
+            SongStore.RunSongId = null;
+            SceneManager.LoadScene(MenuSceneIndex);
+        }
+
         private void ResumeClock()
         {
             Time.timeScale = 1f;
@@ -134,7 +193,7 @@ namespace Gluttony
             Section = 0;
             hasJumped = false;
             cameraRig.SnapTo(0f);
-            level.BeginRun(seed, cameraRig.Top);
+            level.BeginRun(seed, cameraRig.Top, TutorialActive);
             cat.ResetTo(new Vector2(0f, level.StartPlatform.Top), level.StartPlatform);
             cat.Health.ResetLives();
             skewer.Clear();
@@ -156,6 +215,8 @@ namespace Gluttony
                 cameraRig.Section = section;
             }
 
+            if (playing.speedsUpWithScore)
+                conductor.SetRate(1f + Mathf.Round(score.Score / ScorePerDoubleRate / RateStep) * RateStep);
             music.SetMood(cat.IsLaunching ? MusicMood.Flight : MusicMood.Climb);
             music.SetNearness(MovingNearness());
 
@@ -177,22 +238,66 @@ namespace Gluttony
 
         private void OnLanded(Platform platform)
         {
+            if (State == GameState.Playing && platform != level.StartPlatform)
+                hasJumped = true;
             if (State != GameState.Playing || platform.Kind != PlatformKind.Landing)
                 return;
             score.SkipTo(platform.Top);
             if (platform.Visited)
                 return;
             platform.Visited = true;
+            ReachedCheckpoint();
             cameraRig.Shake(1, 0.08f);
             Fx.Ring(cat.transform.position, Palette.White, 20, 8f);
             Sfx.Play(SfxId.Impact);
+        }
+
+        private void ReachedCheckpoint()
+        {
+            checkpoints++;
+            if (!normalRun)
+                return;
+            if (checkpoints == TutorialCheckpoints && playing.ID == TutorialSongId)
+            {
+                StartCoroutine(FinishTutorial());
+            }
+            else if (checkpoints == FinalSongCheckpoint)
+            {
+                SwitchTo(FinalSongId);
+            }
+        }
+
+        private IEnumerator FinishTutorial()
+        {
+            SongStore.TutorialDone = true;
+            cat.SetControl(false);
+            cameraRig.Creeping = false;
+            SetState(GameState.GameOver);
+            music.FadeOut(TutorialFadeSeconds);
+            screenFade.gameObject.SetActive(true);
+            for (float t = 0f; t < TutorialFadeSeconds; t += Time.unscaledDeltaTime)
+            {
+                screenFade.color = new Color(0f, 0f, 0f, t / TutorialFadeSeconds);
+                yield return null;
+            }
+            screenFade.color = Color.black;
+            QuitToMenu();
+        }
+
+        private void SwitchTo(string songId)
+        {
+            playing = SongStore.Find(library, songId);
+            conductor.SwitchSong(playing);
+            if (backdrop != null)
+                backdrop.SetSong(playing);
         }
 
         private void OnJumped()
         {
             if (State != GameState.Playing)
                 return;
-            hasJumped = true;
+            if (!TutorialActive)
+                hasJumped = true;
         }
 
         private void OnStabbed(bool caught)
@@ -285,9 +390,7 @@ namespace Gluttony
             music.SetMood(MusicMood.Silent);
             score.Commit();
             Sfx.Play(SfxId.Hurt);
-#if UNITY_ANDROID || UNITY_IOS
-            Handheld.Vibrate();
-#endif
+            GameSettings.Vibrate();
             SetState(GameState.GameOver);
             StartCoroutine(RestartSoon());
         }

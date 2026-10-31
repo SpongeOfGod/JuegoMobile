@@ -4,14 +4,9 @@ namespace Gluttony
 {
     public class Fx : MonoBehaviour
     {
-        private const int Capacity = 512;
-        private const int SortingOrder = 20;
         private const float DefaultGravity = 8f;
 
         private static Fx instance;
-
-        [SerializeField] private Sprite pixel;
-        [SerializeField] private Material material;
 
         private struct Particle
         {
@@ -33,22 +28,11 @@ namespace Gluttony
         private void Awake()
         {
             instance = this;
-            particles = new Particle[Capacity];
-            renderers = new SpriteRenderer[Capacity];
-            particleTransforms = new Transform[Capacity];
-            for (int i = 0; i < Capacity; i++)
-            {
-                var go = new GameObject("Particle");
-                go.transform.SetParent(transform, false);
-                var renderer = go.AddComponent<SpriteRenderer>();
-                renderer.sprite = pixel;
-                if (material != null)
-                    renderer.sharedMaterial = material;
-                renderer.sortingOrder = SortingOrder;
-                renderer.enabled = false;
-                renderers[i] = renderer;
-                particleTransforms[i] = go.transform;
-            }
+            renderers = GetComponentsInChildren<SpriteRenderer>(true);
+            particles = new Particle[renderers.Length];
+            particleTransforms = new Transform[renderers.Length];
+            for (int i = 0; i < renderers.Length; i++)
+                particleTransforms[i] = renderers[i].transform;
         }
 
         public static void Clear()
@@ -120,7 +104,7 @@ namespace Gluttony
 
         private static void Emit(Vector2 position, Vector2 velocity, Color color, int size, float life, float gravityScale, int height = 0)
         {
-            if (instance == null || instance.count >= Capacity)
+            if (instance == null || instance.count >= instance.renderers.Length)
                 return;
             int i = instance.count++;
             instance.particles[i] = new Particle

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -5,11 +6,15 @@ namespace Gluttony
 {
     public abstract class Enemy : BeatBehaviour
     {
+        private const double AttackBeats = 1.0;
+
         public static readonly List<Enemy> All = new List<Enemy>();
 
         [SerializeField] protected SpriteRenderer sprite;
         [SerializeField] private Sprite chunk;
         [SerializeField] private Vector2 hitSize = new Vector2(0.6f, 0.6f);
+        [SerializeField] private Sprite[] idleFrames = new Sprite[0];
+        [SerializeField] private Sprite[] attackFrames = new Sprite[0];
 
         public LaunchInfo Launch { get; set; }
         public double ImpactBeats { get; set; }
@@ -48,6 +53,24 @@ namespace Gluttony
         {
             gameObject.SetActive(false);
             Destroy(gameObject);
+        }
+
+        protected virtual void LateUpdate()
+        {
+            var conductor = Conductor.Instance;
+            if (conductor == null || sprite == null)
+                return;
+            double beats = conductor.SongBeats;
+            double lead = ImpactBeat - beats;
+            if (attackFrames.Length > 0 && !double.IsNaN(lead) && lead <= AttackBeats)
+            {
+                int frame = (int)((1.0 - lead / AttackBeats) * attackFrames.Length);
+                sprite.sprite = attackFrames[Mathf.Clamp(frame, 0, attackFrames.Length - 1)];
+            }
+            else if (idleFrames.Length > 0)
+            {
+                sprite.sprite = idleFrames[Mod((int)Math.Floor(beats), idleFrames.Length)];
+            }
         }
 
         protected static int Mod(int a, int n) => ((a % n) + n) % n;

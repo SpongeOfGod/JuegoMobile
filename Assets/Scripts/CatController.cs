@@ -49,7 +49,6 @@ namespace Gluttony
         private const float WindPerSecond = 60f;
         private const float GhostEveryBeats = 0.0625f;
         private const float GhostLifeBeats = 0.3f;
-        private const int GhostCount = 10;
         private const float GhostAlpha = 0.5f;
         private const float FallGravity = 24f;
         private const float MaxFallUnitsPerBeat = 12f;
@@ -68,6 +67,7 @@ namespace Gluttony
         [SerializeField] private float launchUnitsPerBeat = 8f;
         [SerializeField] private float laneSeconds = 0.08f;
         [SerializeField] private SpriteRenderer sprite;
+        [SerializeField] private Transform trail;
         [SerializeField] private Sprite idleSprite;
         [SerializeField] private Sprite walkSprite;
         [SerializeField] private Sprite[] crouchSprites = new Sprite[0];
@@ -209,24 +209,10 @@ namespace Gluttony
             Health = GetComponent<CatHealth>();
             Skewer = GetComponent<Skewer>();
 
-            var holder = new GameObject("Trail").transform;
-            holder.SetParent(transform.parent, false);
-            ghosts = new SpriteRenderer[GhostCount];
-            ghostBorn = new double[GhostCount];
-            for (int i = 0; i < GhostCount; i++)
-            {
-                var go = new GameObject("Ghost");
-                go.transform.SetParent(holder, false);
-                var ghost = go.AddComponent<SpriteRenderer>();
-                if (sprite != null)
-                {
-                    ghost.sharedMaterial = sprite.sharedMaterial;
-                    ghost.sortingOrder = sprite.sortingOrder - 2;
-                }
-                ghost.enabled = false;
-                ghosts[i] = ghost;
+            ghosts = trail.GetComponentsInChildren<SpriteRenderer>(true);
+            ghostBorn = new double[ghosts.Length];
+            for (int i = 0; i < ghostBorn.Length; i++)
                 ghostBorn[i] = double.NegativeInfinity;
-            }
         }
 
         private void OnEnable()

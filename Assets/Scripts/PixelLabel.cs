@@ -12,6 +12,7 @@ namespace Gluttony
         [SerializeField] private bool shadow = true;
         [SerializeField] private Color shadowColor = Color.black;
         [SerializeField] private bool shrinkToFit = true;
+        [SerializeField] private Color ink = Color.white;
 
         private string cachedText;
         private string[] cachedLines;
@@ -88,7 +89,7 @@ namespace Gluttony
             else
                 top = rect.yMin + blockHeight;
             top = Mathf.Floor(top);
-            Color32 main = new Color(1f, 1f, 1f, color.a);
+            Color32 main = new Color(ink.r, ink.g, ink.b, color.a);
             Color32 dark = new Color(shadowColor.r, shadowColor.g, shadowColor.b, shadowColor.a * color.a);
 
             for (int i = 0; i < lines.Length; i++)

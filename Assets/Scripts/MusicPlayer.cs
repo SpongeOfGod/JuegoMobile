@@ -37,23 +37,42 @@ namespace Gluttony
         private float[] levels;
         private MusicMood mood = MusicMood.Silent;
         private float nearness;
+        private float master = 1f;
+        private float masterStep;
+
+        public void SetSong(Song song)
+        {
+            if (layers.Length > 0)
+            {
+                layers[0].clip = song.clip;
+                layers[0].volume = song.volume;
+            }
+            for (int i = 1; i < layers.Length; i++)
+                layers[i].clip = song.dynamicLayer;
+            if (sources == null)
+                return;
+            for (int i = 0; i < layers.Length; i++)
+            {
+                if (sources[i].clip == layers[i].clip)
+                    continue;
+                sources[i].Stop();
+                sources[i].clip = layers[i].clip;
+                if (sources[i].clip != null)
+                    sources[i].clip.LoadAudioData();
+            }
+        }
 
         public void Prepare()
         {
             if (sources != null)
                 return;
-            sources = new AudioSource[layers.Length];
+            sources = GetComponents<AudioSource>();
             levels = new float[layers.Length];
             for (int i = 0; i < layers.Length; i++)
             {
-                var source = gameObject.AddComponent<AudioSource>();
-                source.playOnAwake = false;
-                source.loop = true;
-                source.clip = layers[i].clip;
-                source.volume = 0f;
-                if (source.clip != null)
-                    source.clip.LoadAudioData();
-                sources[i] = source;
+                sources[i].clip = layers[i].clip;
+                if (sources[i].clip != null)
+                    sources[i].clip.LoadAudioData();
             }
         }
 
@@ -79,7 +98,7 @@ namespace Gluttony
                 source.UnPause();
         }
 
-        public void Seek(double startDsp)
+        public void Seek(double startDsp, float rate)
         {
             if (sources == null)
                 return;
@@ -94,9 +113,19 @@ namespace Gluttony
                     source.PlayScheduled(startDsp);
                     continue;
                 }
-                source.time = (float)(position % source.clip.length);
+                source.time = (float)(position * rate % source.clip.length);
                 source.Play();
             }
+        }
+
+        public void FadeOut(float seconds) => masterStep = 1f / Mathf.Max(0.01f, seconds);
+
+        public void SetPitch(float value)
+        {
+            if (sources == null)
+                return;
+            foreach (var source in sources)
+                source.pitch = value;
         }
 
         public void SetNearness(float value) => nearness = Mathf.Clamp01(value);
@@ -124,13 +153,14 @@ namespace Gluttony
 
         private void ApplyLayerVolume(int layerIndex)
         {
-            sources[layerIndex].volume = levels[layerIndex] * layers[layerIndex].volume * volume;
+            sources[layerIndex].volume = levels[layerIndex] * layers[layerIndex].volume * volume * master;
         }
 
         private void Update()
         {
             if (sources == null)
                 return;
+            master = Mathf.MoveTowards(master, 0f, masterStep * Time.unscaledDeltaTime);
             float seconds = mood == MusicMood.Silent ? SilenceSeconds : fadeSeconds;
             float step = Time.unscaledDeltaTime / Mathf.Max(0.01f, seconds);
             for (int i = 0; i < layers.Length; i++)

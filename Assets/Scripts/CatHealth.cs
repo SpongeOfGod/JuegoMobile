@@ -37,9 +37,7 @@ namespace Gluttony
             invulnerableUntil = Time.time + invulnerableSeconds;
             Sfx.Play(SfxId.Hurt);
             Fx.Burst(transform.position + Vector3.up * 0.4f, Palette.Red, 14);
-#if UNITY_ANDROID || UNITY_IOS
-            Handheld.Vibrate();
-#endif
+            GameSettings.Vibrate();
             LivesChanged?.Invoke(Lives);
             if (Lives <= 0)
                 Died?.Invoke();

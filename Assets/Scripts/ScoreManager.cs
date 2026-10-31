@@ -4,7 +4,7 @@ namespace Gluttony
 {
     public class ScoreManager : MonoBehaviour
     {
-        public const string BestKey = "record";
+        private const string BestPrefix = "record.";
 
         public static ScoreManager Instance { get; private set; }
 
@@ -20,20 +20,23 @@ namespace Gluttony
         private int bonusPoints;
         private float top;
         private float climbed;
+        private string bestKey = BestPrefix;
+
+        public static string BestKeyFor(string songId) => BestPrefix + songId;
 
         private void Awake()
         {
             Instance = this;
-            Best = PlayerPrefs.GetInt(BestKey, 0);
         }
 
-        public void BeginRun(float height)
+        public void BeginRun(float height, string songId)
         {
+            bestKey = BestKeyFor(songId);
             top = height;
             climbed = 0f;
             heightPoints = 0;
             bonusPoints = 0;
-            Best = PlayerPrefs.GetInt(BestKey, 0);
+            Best = PlayerPrefs.GetInt(bestKey, 0);
         }
 
         public void SetHeight(float height)
@@ -56,12 +59,14 @@ namespace Gluttony
             return points;
         }
 
+        public void ForgetBest() => Best = 0;
+
         public void Commit()
         {
             if (Score <= Best)
                 return;
             Best = Score;
-            PlayerPrefs.SetInt(BestKey, Best);
+            PlayerPrefs.SetInt(bestKey, Best);
             PlayerPrefs.Save();
         }
     }

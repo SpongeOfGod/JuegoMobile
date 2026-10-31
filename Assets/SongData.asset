@@ -13,12 +13,162 @@ MonoBehaviour:
   m_Name: SongData
   m_EditorClassIdentifier: 
   AllSongs:
-  - songName: LIVVI TRAILER
-    cost: 1.99
-    ID: Song1
-  - songName: VATRA LITTLEMIX
-    cost: 2.99
-    ID: Song2
-  - songName: ITERUM BOSS MUSIC
-    cost: 3.99
-    ID: Song3
+  - songName: CHASING STARS
+    pack: GLUTTONY OST
+    cost: 0
+    ID: ChasingStars
+    included: 1
+    cover: {fileID: 21300000, guid: fbfde9f4421f9673190cd1da5f464ca3, type: 3}
+    clip: {fileID: 8300000, guid: 55c8d8c99e2c8b94e905c7f463160cc5, type: 3}
+    dynamicLayer: {fileID: 8300000, guid: bb76edfabb7bd4cc080c4d7f3450fff3, type: 3}
+    bpm: 120
+    firstBeatSeconds: 0
+    volume: 0.9
+    previewSeconds: 10
+    blackouts: []
+    thunders: []
+    redToGreen: 0
+    speedsUpWithScore: 0
+  - songName: TUTORIAL SONG
+    pack: GLUTTONY OST
+    cost: 0
+    ID: TutorialSong
+    included: 1
+    cover: {fileID: 21300000, guid: fbfde9f4421f9673190cd1da5f464ca3, type: 3}
+    clip: {fileID: 8300000, guid: 6039e6a49bc2ca8fcdfcc60fd23db7b1, type: 3}
+    dynamicLayer: {fileID: 0}
+    bpm: 100
+    firstBeatSeconds: 0
+    volume: 0.93
+    previewSeconds: 0
+    blackouts: []
+    thunders: []
+    redToGreen: 0
+    speedsUpWithScore: 0
+  - songName: QUICK ADVANCE
+    pack: GLUTTONY OST
+    cost: 0
+    ID: AQuickAdvance
+    included: 1
+    cover: {fileID: 21300000, guid: fbfde9f4421f9673190cd1da5f464ca3, type: 3}
+    clip: {fileID: 8300000, guid: 9ad2d93b055bae3a1c0c8c4f6626b248, type: 3}
+    dynamicLayer: {fileID: 0}
+    bpm: 165
+    firstBeatSeconds: 0
+    volume: 1.64
+    previewSeconds: 7.273
+    blackouts: []
+    thunders: []
+    redToGreen: 0
+    speedsUpWithScore: 0
+  - songName: BONGO ONGO
+    pack: ACCUN PACK
+    cost: 0.99
+    ID: BongoOngoFight
+    included: 0
+    cover: {fileID: 21300000, guid: 69de31bedf44a1e2ff7b0b131addda91, type: 3}
+    clip: {fileID: 8300000, guid: 6fa84dad1ca5a85f951dc59e3c226598, type: 3}
+    dynamicLayer: {fileID: 0}
+    bpm: 160
+    firstBeatSeconds: 0
+    volume: 1.97
+    previewSeconds: 7.5
+    blackouts:
+    - {x: 0, y: 6}
+    - {x: 25.5, y: 28.5}
+    - {x: 48, y: 51}
+    thunders: []
+    redToGreen: 0
+    speedsUpWithScore: 0
+  - songName: FUNGI COMBATE
+    pack: ACCUN PACK
+    cost: 0.99
+    ID: FungiCombate
+    included: 0
+    cover: {fileID: 21300000, guid: 1b15597ec5f3835d2e0ffacaa98faec0, type: 3}
+    clip: {fileID: 8300000, guid: 800ab3958ee610eff7cc1b8a38a76687, type: 3}
+    dynamicLayer: {fileID: 0}
+    bpm: 107
+    firstBeatSeconds: 0
+    volume: 2.51
+    previewSeconds: 8.972
+    blackouts: []
+    thunders: []
+    redToGreen: 1
+    speedsUpWithScore: 0
+  - songName: MALEVOLO
+    pack: LITTLE PACK
+    cost: 0.99
+    ID: Malevolo
+    included: 0
+    cover: {fileID: 21300000, guid: d9c6d531cda5e438a20660158a06549e, type: 3}
+    clip: {fileID: 8300000, guid: 1abb4511687004a77dde578375a94133, type: 3}
+    dynamicLayer: {fileID: 0}
+    bpm: 155
+    firstBeatSeconds: 0
+    volume: 1.7
+    previewSeconds: 1.548
+    blackouts:
+    - {x: 100.745, y: 113}
+    thunders: []
+    redToGreen: 0
+    speedsUpWithScore: 0
+  - songName: HEATED
+    pack: LITTLE PACK
+    cost: 0.99
+    ID: HeatedBattle
+    included: 0
+    cover: {fileID: 21300000, guid: d9c6d531cda5e438a20660158a06549e, type: 3}
+    clip: {fileID: 8300000, guid: c7c7fa50eb9455f3744aff0efa64e5c7, type: 3}
+    dynamicLayer: {fileID: 0}
+    bpm: 170
+    firstBeatSeconds: 0
+    volume: 1.62
+    previewSeconds: 9.882
+    blackouts:
+    - {x: 0, y: 11.294}
+    - {x: 56.47, y: 62.12}
+    - {x: 87.53, y: 97.41}
+    thunders: []
+    redToGreen: 0
+    speedsUpWithScore: 0
+  - songName: LECTOR
+    pack: LITTLE PACK
+    cost: 0.99
+    ID: Lector
+    included: 0
+    cover: {fileID: 21300000, guid: d9c6d531cda5e438a20660158a06549e, type: 3}
+    clip: {fileID: 8300000, guid: 2ed5c07a6e11a27898b3f441669369c4, type: 3}
+    dynamicLayer: {fileID: 0}
+    bpm: 135
+    firstBeatSeconds: 0
+    volume: 1.7
+    previewSeconds: 0
+    blackouts:
+    - {x: 21.33, y: 28.571}
+    thunders: []
+    redToGreen: 0
+    speedsUpWithScore: 0
+  - songName: ORYL
+    pack: LITTLE PACK
+    cost: 0.99
+    ID: Oryl
+    included: 0
+    cover: {fileID: 21300000, guid: d9c6d531cda5e438a20660158a06549e, type: 3}
+    clip: {fileID: 8300000, guid: 0e174dcc489c34d60c5d4b8f29adb933, type: 3}
+    dynamicLayer: {fileID: 0}
+    bpm: 160
+    firstBeatSeconds: 0
+    volume: 2.42
+    previewSeconds: 18
+    blackouts:
+    - {x: 0, y: 6}
+    - {x: 12, y: 18}
+    - {x: 54, y: 60}
+    thunders:
+    - {x: 5.625, y: 0}
+    - {x: 11.625, y: 0}
+    - {x: 26.625, y: 0.75}
+    - {x: 38.625, y: 0}
+    redToGreen: 0
+    speedsUpWithScore: 1

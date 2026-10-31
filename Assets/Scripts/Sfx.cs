@@ -47,8 +47,6 @@ namespace Gluttony
 
     public class Sfx : MonoBehaviour
     {
-        private const int VoiceCount = 24;
-        private const float ClipFadeSeconds = 0.06f;
         private const double SchedulingLeadSeconds = 0.002;
 
         private static Sfx instance;
@@ -57,7 +55,8 @@ namespace Gluttony
         [SerializeField] private SfxClip[] clips = new SfxClip[0];
         [SerializeField] private float volume = 1f;
         [SerializeField] private float windVolume = 0.3f;
-        [SerializeField] private AudioClip windClip;
+        [SerializeField] private Transform voiceRoot;
+        [SerializeField] private AudioSource windSource;
 
         private sealed class SoundVoice
         {
@@ -87,7 +86,6 @@ namespace Gluttony
         private AudioClip[] preparedClips;
         private float[] clipVolumes;
         private readonly List<ScheduledSound> pausedSounds = new List<ScheduledSound>();
-        private AudioSource windSource;
         private float windLevel;
 
         public static float Note(int index)
@@ -100,18 +98,14 @@ namespace Gluttony
             instance = this;
             CreateVoices();
             PrepareClips();
-            CreateWindSource();
         }
 
         private void CreateVoices()
         {
-            voices = new SoundVoice[VoiceCount];
+            AudioSource[] sources = voiceRoot.GetComponentsInChildren<AudioSource>(true);
+            voices = new SoundVoice[sources.Length];
             for (int i = 0; i < voices.Length; i++)
-            {
-                AudioSource source = gameObject.AddComponent<AudioSource>();
-                source.playOnAwake = false;
-                voices[i] = new SoundVoice { Source = source };
-            }
+                voices[i] = new SoundVoice { Source = sources[i] };
         }
 
         private void PrepareClips()
@@ -125,33 +119,9 @@ namespace Gluttony
                 if (entry == null || entry.clip == null)
                     continue;
 
-                int soundIndex = (int)entry.id;
-                if (entry.id == SfxId.Stab)
-                    preparedClips[soundIndex] = entry.clip;
-                else
-                    preparedClips[soundIndex] = AudioClipProcessing.SmoothEnding(entry.clip, ClipFadeSeconds);
-
-                clipVolumes[soundIndex] = entry.volume;
+                preparedClips[(int)entry.id] = entry.clip;
+                clipVolumes[(int)entry.id] = entry.volume;
             }
-
-            for (int i = 0; i < preparedClips.Length; i++)
-            {
-                bool isSkewer = (SfxId)i == SfxId.Skewer;
-                float targetRms = isSkewer ? 0.2f : 0.126f;
-                float peakCeiling = isSkewer ? 0.89f : 0.708f;
-                preparedClips[i] = AudioClipProcessing.NormalizeVolume(preparedClips[i], targetRms, peakCeiling);
-            }
-        }
-
-        private void CreateWindSource()
-        {
-            windSource = gameObject.AddComponent<AudioSource>();
-            windSource.playOnAwake = false;
-            windSource.loop = true;
-            windSource.clip = windClip;
-            windSource.volume = 0f;
-            if (windClip != null)
-                windSource.Play();
         }
 
         public static void Wind(float level)

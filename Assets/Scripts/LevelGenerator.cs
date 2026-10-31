@@ -42,7 +42,11 @@ namespace Gluttony
 
         public Platform StartPlatform { get; private set; }
 
+        private const int TutorialSections = 2;
+
         private System.Random rng;
+        private bool tutorial;
+        private bool finished;
         private CatController cat;
         private float nextY;
         private int rowsLeft;
@@ -67,8 +71,10 @@ namespace Gluttony
             return count;
         }
 
-        public void BeginRun(int seed, float cameraTop)
+        public void BeginRun(int seed, float cameraTop, bool tutorialRun)
         {
+            tutorial = tutorialRun;
+            finished = false;
             Clear();
             cat = CatController.Instance;
             rng = new System.Random(seed);
@@ -83,7 +89,7 @@ namespace Gluttony
 
         public void Fill(float cameraTop)
         {
-            while (waitingPad == null && nextY < cameraTop + SpawnAhead)
+            while (!finished && waitingPad == null && nextY < cameraTop + SpawnAhead)
                 SpawnNext();
         }
 
@@ -194,7 +200,7 @@ namespace Gluttony
                     return ChainRow(previous);
                 return new RowPlan { Jump = ThirdLane(previous.Moving) };
             }
-            bool canMove = !afterMoving && inClimb;
+            bool canMove = !tutorial && !afterMoving && inClimb;
             int dir = prev < 0 ? 0 : System.Math.Sign(land - prev);
             if (dir != 0)
             {
@@ -309,6 +315,11 @@ namespace Gluttony
             SpawnPlatform(landingPrefab, PlatformKind.Landing, 0f, tableY, Lanes.PlayHalfWidth * 2f);
             landings.Add(tableY);
             section++;
+            if (tutorial && section >= TutorialSections)
+            {
+                finished = true;
+                return;
+            }
             StartClimb(tableY);
         }
 

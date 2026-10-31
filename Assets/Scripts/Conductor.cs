@@ -9,6 +9,7 @@ namespace Gluttony
         private const float PulseBeats = 0.3f;
         private const double MaxDriftSeconds = 0.1;
         private const double ResyncSeconds = 0.25;
+        private const double SwitchLeadSeconds = 0.05;
 
         public static Conductor Instance { get; private set; }
 
@@ -20,6 +21,8 @@ namespace Gluttony
         public event Action<int> Beat;
 
         public float Bpm => bpm;
+        public float BaseBpm => baseBpm;
+        public double ClipBeats => SongBeats - clipStartBeat;
         public double SecondsPerBeat => 60.0 / bpm;
         public bool IsRunning { get; private set; }
         public bool IsPaused { get; private set; }
@@ -48,6 +51,12 @@ namespace Gluttony
         private bool pausedBeforeMusic;
         private int lastBeatFired;
         private bool audioChanged;
+        private float baseBpm = 120f;
+        private float rate = 1f;
+        private double clipStartBeat;
+        private Song pendingSong;
+        private double pendingDsp;
+        private double pendingBeat;
 
         private void Awake()
         {
@@ -65,11 +74,69 @@ namespace Gluttony
                 Instance = null;
         }
 
+        public void Configure(float songBpm, float songFirstBeatSeconds)
+        {
+            baseBpm = songBpm;
+            bpm = songBpm;
+            firstBeatSeconds = songFirstBeatSeconds;
+            rate = 1f;
+            clipStartBeat = 0.0;
+            pendingSong = null;
+            if (music != null)
+                music.SetPitch(1f);
+        }
+
         private void OnEnable() => AudioSettings.OnAudioConfigurationChanged += OnAudioChanged;
 
         private void OnDisable() => AudioSettings.OnAudioConfigurationChanged -= OnAudioChanged;
 
         private void OnAudioChanged(bool deviceWasChanged) => audioChanged = true;
+
+        public void SwitchSong(Song song)
+        {
+            pendingSong = song;
+            pendingBeat = Math.Ceiling(SongBeats) + 1.0;
+            pendingDsp = DspAtBeat(pendingBeat);
+        }
+
+        public void SetRate(float value)
+        {
+            if (!IsRunning || IsPaused || SongTime < 0.0 || Mathf.Approximately(rate, value))
+                return;
+            double dsp = AudioSettings.dspTime;
+            double beatNow = (dsp - dspStart - firstBeatSeconds) / SecondsPerBeat;
+            double beats = SongBeats;
+            rate = value;
+            bpm = baseBpm * value;
+            dspStart = dsp - firstBeatSeconds - beatNow * SecondsPerBeat;
+            SongTime = beats * SecondsPerBeat;
+            lastDsp = -1;
+            if (music != null)
+                music.SetPitch(value);
+        }
+
+        private void ApplyPendingSong(double dsp)
+        {
+            if (pendingSong == null || dsp < pendingDsp - SwitchLeadSeconds)
+                return;
+            double beats = SongBeats;
+            var song = pendingSong;
+            pendingSong = null;
+            baseBpm = song.bpm;
+            bpm = song.bpm;
+            rate = 1f;
+            firstBeatSeconds = song.firstBeatSeconds;
+            dspStart = pendingDsp - firstBeatSeconds - pendingBeat * SecondsPerBeat;
+            SongTime = beats * SecondsPerBeat;
+            clipStartBeat = pendingBeat;
+            lastDsp = -1;
+            if (music != null)
+            {
+                music.SetSong(song);
+                music.SetPitch(1f);
+                music.PlayScheduled(pendingDsp);
+            }
+        }
 
         public void StartSong(double leadBeats = 0.0)
         {
@@ -105,6 +172,7 @@ namespace Gluttony
                 return;
             IsPaused = false;
             dspStart += AudioSettings.dspTime - pausedAtDsp;
+            pendingDsp += AudioSettings.dspTime - pausedAtDsp;
             lastDsp = -1;
             if (music == null)
                 return;
@@ -120,7 +188,7 @@ namespace Gluttony
             dspStart += raw - SongTime;
             lastDsp = -1;
             if (music != null)
-                music.Seek(dspStart);
+                music.Seek(dspStart + clipStartBeat * SecondsPerBeat, rate);
             Sfx.Reschedule();
         }
 
@@ -139,6 +207,7 @@ namespace Gluttony
                 return;
 
             double dsp = AudioSettings.dspTime;
+            ApplyPendingSong(dsp);
             double now = Time.realtimeSinceStartupAsDouble;
             if (dsp != lastDsp)
             {

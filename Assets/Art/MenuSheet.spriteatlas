@@ -1,0 +1,148 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: MenuSheet
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 0
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 0
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 0
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_IgnorePlatformSupport: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    - serializedVersion: 3
+      m_BuildTarget: Android
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: 4
+      m_TextureCompression: 0
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 1
+      m_IgnorePlatformSupport: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    - serializedVersion: 3
+      m_BuildTarget: iPhone
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: 4
+      m_TextureCompression: 0
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 1
+      m_IgnorePlatformSupport: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    - serializedVersion: 3
+      m_BuildTarget: Standalone
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: 4
+      m_TextureCompression: 0
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 1
+      m_IgnorePlatformSupport: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 0
+      allowAlphaSplitting: 0
+      enableRotation: 0
+      enableTightPacking: 0
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: f62fb5ce87a458b4b95c8358f558573b, type: 3}
+    - {fileID: 2800000, guid: c480e4da49f4fc344a4e16f579b85d82, type: 3}
+    - {fileID: 2800000, guid: ea0830637d69d0eb53143b583a2bad9d, type: 3}
+    - {fileID: 2800000, guid: 5c8d85aa0eadd73449ed86a011ca05b1, type: 3}
+    - {fileID: 2800000, guid: c4c2088663a3b714390e09ae9d005463, type: 3}
+    - {fileID: 2800000, guid: 85c7b06284818cd478ab6b07922d83c5, type: 3}
+    - {fileID: 2800000, guid: 6c3225cd78a18eb40a0d874cdd8d7372, type: 3}
+    - {fileID: 2800000, guid: 747ed58d126ec5d4d80139f3b385ed2c, type: 3}
+    - {fileID: 2800000, guid: b431e09da51990f428e9fe493c2ad26e, type: 3}
+    - {fileID: 2800000, guid: 69de31bedf44a1e2ff7b0b131addda91, type: 3}
+    - {fileID: 2800000, guid: 1b15597ec5f3835d2e0ffacaa98faec0, type: 3}
+    - {fileID: 2800000, guid: fbfde9f4421f9673190cd1da5f464ca3, type: 3}
+    - {fileID: 2800000, guid: d9c6d531cda5e438a20660158a06549e, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+    packedSpriteRenderDataKeys:
+    - d9c6d531cda5e438a20660158a06549e: 21300000
+    - 85c7b06284818cd478ab6b07922d83c5: 21300000
+    - ea0830637d69d0eb53143b583a2bad9d: 21300000
+    - fbfde9f4421f9673190cd1da5f464ca3: 21300000
+    - c4c2088663a3b714390e09ae9d005463: 21300000
+    - 5c8d85aa0eadd73449ed86a011ca05b1: 21300000
+    - c480e4da49f4fc344a4e16f579b85d82: 21300000
+    - 747ed58d126ec5d4d80139f3b385ed2c: 21300000
+    - b431e09da51990f428e9fe493c2ad26e: 21300000
+    - 6c3225cd78a18eb40a0d874cdd8d7372: 21300000
+    - 1b15597ec5f3835d2e0ffacaa98faec0: 21300000
+    - 69de31bedf44a1e2ff7b0b131addda91: 21300000
+    - f62fb5ce87a458b4b95c8358f558573b: 21300000
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: d9c6d531cda5e438a20660158a06549e, type: 3}
+  - {fileID: 21300000, guid: 85c7b06284818cd478ab6b07922d83c5, type: 3}
+  - {fileID: 21300000, guid: ea0830637d69d0eb53143b583a2bad9d, type: 3}
+  - {fileID: 21300000, guid: fbfde9f4421f9673190cd1da5f464ca3, type: 3}
+  - {fileID: 21300000, guid: c4c2088663a3b714390e09ae9d005463, type: 3}
+  - {fileID: 21300000, guid: 5c8d85aa0eadd73449ed86a011ca05b1, type: 3}
+  - {fileID: 21300000, guid: c480e4da49f4fc344a4e16f579b85d82, type: 3}
+  - {fileID: 21300000, guid: 747ed58d126ec5d4d80139f3b385ed2c, type: 3}
+  - {fileID: 21300000, guid: b431e09da51990f428e9fe493c2ad26e, type: 3}
+  - {fileID: 21300000, guid: 6c3225cd78a18eb40a0d874cdd8d7372, type: 3}
+  - {fileID: 21300000, guid: 1b15597ec5f3835d2e0ffacaa98faec0, type: 3}
+  - {fileID: 21300000, guid: 69de31bedf44a1e2ff7b0b131addda91, type: 3}
+  - {fileID: 21300000, guid: f62fb5ce87a458b4b95c8358f558573b, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - cover_littlepack
+  - play_UI_pressed
+  - logo_gluttony
+  - cover_gluttony
+  - options_UI_unpressed
+  - options_UI_pressed
+  - bonfire2
+  - shop_UI_pressed
+  - shop_UI_unpressed
+  - play_UI_unpressed
+  - cover_fungi
+  - cover_bongo
+  - bonfire1
+  m_RenderDataMap: {}
+  m_Tag: MenuSheet
+  m_IsVariant: 0
