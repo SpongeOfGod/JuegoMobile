@@ -29,7 +29,7 @@ MonoBehaviour:
     thunders: []
     redToGreen: 0
     speedsUpWithScore: 0
-  - songName: TUTORIAL SONG
+  - songName: TUTORIAL
     pack: GLUTTONY OST
     cost: 0
     ID: TutorialSong

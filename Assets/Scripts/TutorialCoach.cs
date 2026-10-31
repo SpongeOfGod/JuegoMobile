@@ -7,6 +7,7 @@ namespace Gluttony
         private const string MoveText = "DESLIZA PARA MOVERTE";
         private const string JumpText = "MANTÉN PULSADO\nPARA SALTAR";
         private const string FoodText = "¡PINCHA A TODA LA COMIDA!";
+        private const float MinHintSeconds = 2.5f;
 
         private static bool moved;
         private static bool jumped;
@@ -15,6 +16,7 @@ namespace Gluttony
         [SerializeField] private PixelLabel hintLabel;
         [SerializeField] private PixelLabel countLabel;
 
+        private float hintShownAt;
         private bool onTrampoline;
         private CatController cat;
 
@@ -70,7 +72,17 @@ namespace Gluttony
             string count = "";
             if (cat.Charging && game.Checkpoints < 1)
                 count = cat.InReleaseWindow ? "YA" : cat.ChargeLevel > 0 ? cat.ChargeLevel.ToString() : "";
-            Show(CurrentHint(), count);
+            Show(HeldHint(CurrentHint()), count);
+        }
+
+        private string HeldHint(string next)
+        {
+            if (next == hintLabel.Text)
+                return next;
+            if (hintLabel.Text != "" && Time.unscaledTime - hintShownAt < MinHintSeconds)
+                return hintLabel.Text;
+            hintShownAt = Time.unscaledTime;
+            return next;
         }
 
         private string CurrentHint()
