@@ -38,6 +38,7 @@ namespace Gluttony
         private Vector2[] thunders;
         private float thunderLight;
         private float songLength;
+        private Color partyFar = Color.white;
 
         private void Awake()
         {
@@ -52,6 +53,13 @@ namespace Gluttony
                 emberSpeeds[i] = Random.Range(0.6f, 1.4f);
                 emberPositions[i] = new Vector2(Random.Range(-5f, 5f), Random.Range(-9f, 9f));
             }
+        }
+
+        public void SetPartyTint(Color farTint, Color wallTint)
+        {
+            partyFar = farTint;
+            leftWall.color = wallTint;
+            rightWall.color = wallTint;
         }
 
         public void SetSong(Song song)
@@ -85,7 +93,7 @@ namespace Gluttony
                 }
             }
             Color tint = Color.Lerp(Color.white, Color.black, level);
-            far.color = tint;
+            far.color = tint * partyFar;
             for (int i = 0; i < embers.Length; i++)
                 embers[i].color = Color.Lerp(emberColors[i] * tint, Color.white, thunderLight);
             return level;

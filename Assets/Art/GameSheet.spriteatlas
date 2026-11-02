@@ -97,6 +97,7 @@ SpriteAtlas:
     - {fileID: 2800000, guid: 30154a393f36508c036b6978b8abf9fc, type: 3}
     - {fileID: 2800000, guid: b5adce61689ceb130384fe515e8cf884, type: 3}
     - {fileID: 2800000, guid: 66c0bdc2bc4c7f744b8f7ec670fce1c0, type: 3}
+    - {fileID: 2800000, guid: 33c9809c75a04bfa822045efc1505e5d, type: 3}
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
@@ -139,6 +140,19 @@ SpriteAtlas:
     - 0484af0b02ccf994889f26c76d2c7fa9: -1608545128
     - 0484af0b02ccf994889f26c76d2c7fa9: 475918809
     - 0484af0b02ccf994889f26c76d2c7fa9: -1866268494
+    - 33c9809c75a04bfa822045efc1505e5d: 1788664123
+    - 33c9809c75a04bfa822045efc1505e5d: 1846000919
+    - 33c9809c75a04bfa822045efc1505e5d: 55694600
+    - 33c9809c75a04bfa822045efc1505e5d: 696155791
+    - 33c9809c75a04bfa822045efc1505e5d: 2058969369
+    - 33c9809c75a04bfa822045efc1505e5d: 752677307
+    - 33c9809c75a04bfa822045efc1505e5d: 2045364443
+    - 33c9809c75a04bfa822045efc1505e5d: 442144911
+    - 33c9809c75a04bfa822045efc1505e5d: 1573032653
+    - 33c9809c75a04bfa822045efc1505e5d: 846918806
+    - 33c9809c75a04bfa822045efc1505e5d: 908079332
+    - 33c9809c75a04bfa822045efc1505e5d: 395133458
+    - 33c9809c75a04bfa822045efc1505e5d: 1199524007
     - 2f8157af0bb04774ca7ba324946cba85: 21300000
     - 2ae5bbcf296932647a705590b638a58d: 1482964004
     - 2ae5bbcf296932647a705590b638a58d: 1927150595
@@ -197,6 +211,19 @@ SpriteAtlas:
   - {fileID: -1608545128, guid: 0484af0b02ccf994889f26c76d2c7fa9, type: 3}
   - {fileID: 475918809, guid: 0484af0b02ccf994889f26c76d2c7fa9, type: 3}
   - {fileID: -1866268494, guid: 0484af0b02ccf994889f26c76d2c7fa9, type: 3}
+  - {fileID: 1788664123, guid: 33c9809c75a04bfa822045efc1505e5d, type: 3}
+  - {fileID: 1846000919, guid: 33c9809c75a04bfa822045efc1505e5d, type: 3}
+  - {fileID: 55694600, guid: 33c9809c75a04bfa822045efc1505e5d, type: 3}
+  - {fileID: 696155791, guid: 33c9809c75a04bfa822045efc1505e5d, type: 3}
+  - {fileID: 2058969369, guid: 33c9809c75a04bfa822045efc1505e5d, type: 3}
+  - {fileID: 752677307, guid: 33c9809c75a04bfa822045efc1505e5d, type: 3}
+  - {fileID: 2045364443, guid: 33c9809c75a04bfa822045efc1505e5d, type: 3}
+  - {fileID: 442144911, guid: 33c9809c75a04bfa822045efc1505e5d, type: 3}
+  - {fileID: 1573032653, guid: 33c9809c75a04bfa822045efc1505e5d, type: 3}
+  - {fileID: 846918806, guid: 33c9809c75a04bfa822045efc1505e5d, type: 3}
+  - {fileID: 908079332, guid: 33c9809c75a04bfa822045efc1505e5d, type: 3}
+  - {fileID: 395133458, guid: 33c9809c75a04bfa822045efc1505e5d, type: 3}
+  - {fileID: 1199524007, guid: 33c9809c75a04bfa822045efc1505e5d, type: 3}
   - {fileID: 21300000, guid: 2f8157af0bb04774ca7ba324946cba85, type: 3}
   - {fileID: 1482964004, guid: 2ae5bbcf296932647a705590b638a58d, type: 3}
   - {fileID: 1927150595, guid: 2ae5bbcf296932647a705590b638a58d, type: 3}
@@ -254,6 +281,19 @@ SpriteAtlas:
   - cat_flip0
   - cat_eat_chew
   - cat_idle
+  - card
+  - gift
+  - cart
+  - petal_0
+  - petal_1
+  - petal_2
+  - petal_3
+  - coin_1
+  - coin_0
+  - coin_3
+  - coin_2
+  - tv
+  - phone
   - fork
   - platform_launch
   - wall

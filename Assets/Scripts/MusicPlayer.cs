@@ -130,6 +130,12 @@ namespace Gluttony
 
         public void SetNearness(float value) => nearness = Mathf.Clamp01(value);
 
+        public void GetSpectrum(float[] samples)
+        {
+            if (sources != null && sources.Length > 0)
+                sources[0].GetSpectrumData(samples, 0, FFTWindow.BlackmanHarris);
+        }
+
         public void SetMood(MusicMood value, bool instant = false)
         {
             mood = value;

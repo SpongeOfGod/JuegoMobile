@@ -33,6 +33,8 @@ public class ShopController : MonoBehaviour
         string pack = null;
         foreach (var song in songScriptable.AllSongs)
         {
+            if (SongStore.IsHidden(song))
+                continue;
             if (song.pack != pack)
             {
                 pack = song.pack;

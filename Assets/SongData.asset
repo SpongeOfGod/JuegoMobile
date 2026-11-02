@@ -29,6 +29,7 @@ MonoBehaviour:
     thunders: []
     redToGreen: 0
     speedsUpWithScore: 0
+    effects: 0
   - songName: TUTORIAL
     pack: GLUTTONY OST
     cost: 0
@@ -45,6 +46,7 @@ MonoBehaviour:
     thunders: []
     redToGreen: 0
     speedsUpWithScore: 0
+    effects: 0
   - songName: QUICK ADVANCE
     pack: GLUTTONY OST
     cost: 0
@@ -61,6 +63,7 @@ MonoBehaviour:
     thunders: []
     redToGreen: 0
     speedsUpWithScore: 0
+    effects: 0
   - songName: BONGO ONGO
     pack: ACCUN PACK
     cost: 0.99
@@ -80,6 +83,7 @@ MonoBehaviour:
     thunders: []
     redToGreen: 0
     speedsUpWithScore: 0
+    effects: 0
   - songName: FUNGI COMBATE
     pack: ACCUN PACK
     cost: 0.99
@@ -96,6 +100,7 @@ MonoBehaviour:
     thunders: []
     redToGreen: 1
     speedsUpWithScore: 0
+    effects: 0
   - songName: MALEVOLO
     pack: LITTLE PACK
     cost: 0.99
@@ -113,6 +118,7 @@ MonoBehaviour:
     thunders: []
     redToGreen: 0
     speedsUpWithScore: 0
+    effects: 0
   - songName: HEATED
     pack: LITTLE PACK
     cost: 0.99
@@ -132,6 +138,7 @@ MonoBehaviour:
     thunders: []
     redToGreen: 0
     speedsUpWithScore: 0
+    effects: 0
   - songName: LECTOR
     pack: LITTLE PACK
     cost: 0.99
@@ -149,6 +156,24 @@ MonoBehaviour:
     thunders: []
     redToGreen: 0
     speedsUpWithScore: 0
+    effects: 0
+  - songName: CANAL COMPRAS
+    pack: LITTLE PACK
+    cost: 0.99
+    ID: CanalDeCompras
+    included: 0
+    cover: {fileID: 21300000, guid: d9c6d531cda5e438a20660158a06549e, type: 3}
+    clip: {fileID: 8300000, guid: 74f8b16df29f7ed0e84682d65d767b12, type: 3}
+    dynamicLayer: {fileID: 0}
+    bpm: 125
+    firstBeatSeconds: 0
+    volume: 1.7
+    previewSeconds: 15.36
+    blackouts: []
+    thunders: []
+    redToGreen: 0
+    speedsUpWithScore: 0
+    effects: 2
   - songName: ORYL
     pack: LITTLE PACK
     cost: 0.99
@@ -172,3 +197,42 @@ MonoBehaviour:
     - {x: 38.625, y: 0}
     redToGreen: 0
     speedsUpWithScore: 1
+    effects: 0
+  - songName: ANITTA
+    pack: LUCYBELLE PACK
+    cost: 0.99
+    ID: AnittaBossFight
+    included: 0
+    cover: {fileID: 21300000, guid: 6cdb6c3c719bb8d454bc395878c4d04a, type: 3}
+    clip: {fileID: 8300000, guid: 28f8e9a2a567f0fa833fdaacab9be053, type: 3}
+    dynamicLayer: {fileID: 0}
+    bpm: 130
+    firstBeatSeconds: 0
+    volume: 1.7
+    previewSeconds: 36.923
+    blackouts: []
+    thunders: []
+    redToGreen: 0
+    speedsUpWithScore: 0
+    effects: 0
+  - songName: LUIS MIGUEL
+    pack: LUCYBELLE PACK
+    cost: 0.99
+    ID: LuisMiguelBossFight
+    included: 0
+    cover: {fileID: 21300000, guid: 6cdb6c3c719bb8d454bc395878c4d04a, type: 3}
+    clip: {fileID: 8300000, guid: 062eef1d56bf1de01f301fe279efb65f, type: 3}
+    dynamicLayer: {fileID: 0}
+    bpm: 140
+    firstBeatSeconds: 0
+    volume: 1.7
+    previewSeconds: 75.429
+    blackouts:
+    - {x: 41.143, y: 51.429}
+    - {x: 61.714, y: 75.429}
+    - {x: 116.571, y: 130.286}
+    - {x: 164.571, y: 171.429}
+    thunders: []
+    redToGreen: 0
+    speedsUpWithScore: 0
+    effects: 1

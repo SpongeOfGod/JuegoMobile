@@ -45,6 +45,7 @@ namespace Gluttony
         [SerializeField] private SongScriptableObject library;
         [SerializeField] private UnityEngine.UI.Image screenFade;
         [SerializeField] private Volume songTint;
+        [SerializeField] private SongParty party;
 
         [SerializeField] private float restartSeconds = 1.2f;
 
@@ -138,6 +139,7 @@ namespace Gluttony
             }
             if (backdrop != null)
                 backdrop.SetSong(song);
+            party.SetSong(song);
             if (song.redToGreen && !GreenRun)
             {
                 GreenRun = true;

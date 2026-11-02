@@ -11,6 +11,8 @@ namespace Gluttony
         private const string DailyDateKey = "Song.DailyDate";
         private const string DailySongKey = "Song.DailySong";
         private const string TutorialKey = "Song.TutorialDone";
+        private const string CopyrightKey = "Song.CopyrightUnlocked";
+        private const string CopyrightPack = "COPYRIGHT PACK";
         private const string DateFormat = "yyyy-MM-dd";
 
         public static string RunSongId { get; set; }
@@ -23,6 +25,18 @@ namespace Gluttony
                 PlayerPrefs.Save();
             }
         }
+
+        public static bool CopyrightUnlocked
+        {
+            get => PlayerPrefs.GetInt(CopyrightKey, 0) == 1;
+            set
+            {
+                PlayerPrefs.SetInt(CopyrightKey, value ? 1 : 0);
+                PlayerPrefs.Save();
+            }
+        }
+
+        public static bool IsHidden(Song song) => song.pack == CopyrightPack && !CopyrightUnlocked;
 
         public static bool IsOwned(Song song) => song.included || PlayerPrefs.GetInt(OwnedPrefix + song.ID, 0) == 1;
 
@@ -44,7 +58,8 @@ namespace Gluttony
         {
             string today = DateTime.Today.ToString(DateFormat, CultureInfo.InvariantCulture);
             string id = PlayerPrefs.GetString(DailySongKey, "");
-            if (PlayerPrefs.GetString(DailyDateKey, "") != today)
+            var current = Find(library, id);
+            if (PlayerPrefs.GetString(DailyDateKey, "") != today || (current != null && IsHidden(current)))
             {
                 id = PickDaily(library, id);
                 PlayerPrefs.SetString(DailyDateKey, today);
@@ -90,6 +105,7 @@ namespace Gluttony
             PlayerPrefs.DeleteKey(DailyDateKey);
             PlayerPrefs.DeleteKey(DailySongKey);
             PlayerPrefs.DeleteKey(TutorialKey);
+            PlayerPrefs.DeleteKey(CopyrightKey);
             PlayerPrefs.Save();
         }
 
@@ -105,7 +121,7 @@ namespace Gluttony
         {
             var locked = new List<Song>();
             foreach (var song in library.AllSongs)
-                if (!IsOwned(song))
+                if (!IsOwned(song) && !IsHidden(song))
                     locked.Add(song);
             if (locked.Count > 1)
                 locked.RemoveAll(song => song.ID == previousId);

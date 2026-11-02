@@ -11,6 +11,12 @@ namespace Gluttony
 
         private Image image;
 
+        public Sprite[] Frames
+        {
+            get => frames;
+            set => frames = value;
+        }
+
         private void Awake() => image = GetComponent<Image>();
 
         private void Update()

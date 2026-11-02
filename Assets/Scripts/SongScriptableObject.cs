@@ -5,6 +5,12 @@ public class SongScriptableObject : ScriptableObject
 {
     public Song[] AllSongs;
 }
+public enum SongEffects
+{
+    None,
+    Party,
+    ShoppingChannel,
+}
 [System.Serializable]
 public class Song
 {
@@ -24,4 +30,5 @@ public class Song
     public Vector2[] thunders;
     public bool redToGreen;
     public bool speedsUpWithScore;
+    public SongEffects effects;
 }
