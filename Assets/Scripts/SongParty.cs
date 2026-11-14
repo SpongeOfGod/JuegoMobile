@@ -20,11 +20,12 @@ namespace Gluttony
         private const int ConfettiCount = 30;
         private const int MarqueeCount = 12;
         private const int SparkCount = 14;
-        private const int TileColumns = 5;
-        private const int TileRows = 9;
         private const int CoinCount = 24;
         private const int PetalCount = 20;
         private const float EqFall = 3f;
+        private const int MarqueeStep = 20;
+        private const float NearDepth = 1f;
+        private const float FarDepth = 0.35f;
         private const int ShopFirstMain = 32;
         private const int ShopBreak = 96;
         private const int ShopSecondMain = 128;
@@ -74,6 +75,9 @@ namespace Gluttony
         private int halfWidth;
         private int halfHeight;
         private Vector2 center;
+        private int scroll;
+        private int fireworkBar = -1;
+        private int fireworkScroll;
         private Material screen;
         private ScreenPass pass;
         private bool screenOn;
@@ -163,6 +167,7 @@ namespace Gluttony
             }
 
             center = cameraRig.transform.position;
+            scroll = Mathf.RoundToInt(center.y * Ppu);
             halfWidth = Mathf.CeilToInt(rig.HalfWidthUnits * Ppu);
             halfHeight = Mathf.CeilToInt(cameraRig.HalfHeight * Ppu);
             used = 0;
@@ -281,7 +286,7 @@ namespace Gluttony
             int fall = halfHeight * 2 + 8;
             for (int i = 0; i < CoinCount; i++)
             {
-                int y = halfHeight - Mathf.FloorToInt(Mathf.Repeat(beat * (14f + Noise(i * 3) * 10f) + Noise(i) * fall, fall));
+                int y = halfHeight - Mathf.FloorToInt(Mathf.Repeat(beat * (14f + Noise(i * 3) * 10f) + Noise(i) * fall + scroll, fall));
                 int x = Mathf.RoundToInt((Noise(i * 7) * 2f - 1f) * halfWidth);
                 Put(coinFrames[(Mathf.FloorToInt(beat * 2f) + i) % coinFrames.Length], x - 3, y);
             }
@@ -292,10 +297,13 @@ namespace Gluttony
             int fall = halfHeight * 2 + 8;
             for (int i = 0; i < PetalCount; i++)
             {
-                int y = halfHeight - Mathf.FloorToInt(Mathf.Repeat(beat * (5f + Noise(i * 3) * 4f) + Noise(i) * fall, fall));
-                int sway = Mathf.RoundToInt(Mathf.Sin(beat * Mathf.PI / 4f + i) * 6f);
+                float depth = Depth(i);
+                float speed = (2f + Noise(i * 3) * 2f) + 6f * depth;
+                int y = halfHeight - Mathf.FloorToInt(Mathf.Repeat(beat * speed + Noise(i) * fall + scroll * depth, fall));
+                int sway = Mathf.RoundToInt(Mathf.Sin(beat * Mathf.PI / 4f + i) * 6f * depth);
                 int x = Mathf.RoundToInt((Noise(i * 7) * 2f - 1f) * halfWidth) + sway;
-                Put(petalSprites[(Mathf.FloorToInt(beat / 2f) + i) % petalSprites.Length], x, y);
+                float shade = Mathf.Lerp(0.4f, 1f, Mathf.InverseLerp(FarDepth, NearDepth, depth));
+                Put(petalSprites[(Mathf.FloorToInt(beat / 2f) + i) % petalSprites.Length], x, y, new Color(shade, shade, shade, 1f));
             }
         }
 
@@ -325,13 +333,14 @@ namespace Gluttony
         private void Marquee()
         {
             int edge = (int)(Lanes.PlayHalfWidth * Ppu) - 3;
-            int step = halfHeight * 2 / MarqueeCount;
             int phase = Mathf.FloorToInt(beat * 2f);
-            for (int i = 0; i < MarqueeCount; i++)
+            int first = Mathf.FloorToInt((scroll - halfHeight) / (float)MarqueeStep) - 1;
+            int last = Mathf.CeilToInt((scroll + halfHeight) / (float)MarqueeStep) + 1;
+            for (int i = first; i <= last; i++)
             {
-                if ((i + phase) % 3 != 0)
+                if (Mod(i + phase, 3) != 0)
                     continue;
-                int y = -halfHeight + i * step;
+                int y = i * MarqueeStep - scroll;
                 Color color = Hue(i / (float)MarqueeCount + beat / 16f, 0.8f, 1f);
                 Put(-edge, y, 3, 3, color);
                 Put(edge - 3, y, 3, 3, color);
@@ -371,9 +380,10 @@ namespace Gluttony
             int fall = halfHeight * 2 + 8;
             for (int i = 0; i < ConfettiCount; i++)
             {
-                float speed = 10f + Noise(i * 3) * 14f;
-                int y = halfHeight - Mathf.FloorToInt(Mathf.Repeat(beat * speed + Noise(i) * fall, fall));
-                int sway = Mathf.RoundToInt(Mathf.Sin(beat * Mathf.PI + i) * 3f);
+                float depth = Depth(i + 100);
+                float speed = (4f + Noise(i * 3) * 6f) + 14f * depth;
+                int y = halfHeight - Mathf.FloorToInt(Mathf.Repeat(beat * speed + Noise(i) * fall + scroll * depth, fall));
+                int sway = Mathf.RoundToInt(Mathf.Sin(beat * Mathf.PI + i) * 3f * depth);
                 int x = Mathf.RoundToInt((Noise(i * 7) * 2f - 1f) * halfWidth) + sway;
                 Put(x, y, 2, Mathf.FloorToInt(beat * 2f + i) % 2 == 0 ? 2 : 1, Hue(Noise(i * 11) + beat / 24f, 0.8f, 1f));
             }
@@ -394,11 +404,17 @@ namespace Gluttony
         {
             int bar = Mathf.FloorToInt(beat / 2f);
             float age = beat / 2f - bar;
+            if (bar != fireworkBar)
+            {
+                fireworkBar = bar;
+                fireworkScroll = scroll;
+            }
+            int drift = scroll - fireworkScroll;
             for (int side = 0; side < 2; side++)
             {
                 int seed = bar * 2 + side;
                 float cx = (Noise(seed) * 0.8f + 0.1f) * halfWidth * (side == 0 ? -1f : 1f);
-                float cy = (Noise(seed + 50) * 0.8f - 0.1f) * halfHeight;
+                float cy = (Noise(seed + 50) * 0.8f - 0.1f) * halfHeight - drift;
                 for (int i = 0; i < SparkCount; i++)
                 {
                     float angle = i * Mathf.PI * 2f / SparkCount;
@@ -412,18 +428,23 @@ namespace Gluttony
 
         private void DanceFloor()
         {
-            int width = halfWidth * 2 / TileColumns + 1;
-            int height = halfHeight * 2 / TileRows + 1;
+            int tile = Mathf.RoundToInt(Backdrop.FarTile * Ppu);
+            float wall = center.y * Backdrop.Parallax;
+            int originY = -Mathf.RoundToInt(Mathf.Repeat(wall, Backdrop.FarTile) * Ppu);
+            int rowBase = Mathf.FloorToInt(wall / Backdrop.FarTile);
+            int rows = halfHeight / tile + 2;
+            int columns = halfWidth / tile + 1;
             int flip = Mathf.FloorToInt(beat);
-            for (int row = 0; row < TileRows; row++)
+            for (int row = -rows; row <= rows; row++)
             {
-                for (int column = 0; column < TileColumns; column++)
+                int worldRow = rowBase + row;
+                for (int column = -columns; column < columns; column++)
                 {
-                    if ((row + column + flip) % 2 != 0)
+                    if (Mod(worldRow + column + flip, 2) != 0)
                         continue;
-                    Color color = Hue((row + column) * 0.07f + beat / 16f, 0.8f, 1f);
+                    Color color = Hue((worldRow + column) * 0.07f + beat / 16f, 0.8f, 1f);
                     color.a = 0.1f;
-                    Put(-halfWidth + column * width, -halfHeight + row * height, width, height, color);
+                    Put(column * tile, originY + row * tile, tile, tile, color);
                 }
             }
         }
@@ -445,6 +466,12 @@ namespace Gluttony
         }
 
         private void Put(Sprite sprite, int x, int y) => Place(sprite, x, y, Vector3.one, Color.white);
+
+        private void Put(Sprite sprite, int x, int y, Color color) => Place(sprite, x, y, Vector3.one, color);
+
+        private static float Depth(int i) => Mathf.Lerp(FarDepth, NearDepth, Noise(i * 5 + 3));
+
+        private static int Mod(int value, int size) => ((value % size) + size) % size;
 
         private void Place(Sprite sprite, int x, int y, Vector3 scale, Color color)
         {

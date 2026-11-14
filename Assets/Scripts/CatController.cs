@@ -189,6 +189,7 @@ namespace Gluttony
         private float introTop;
         private bool introCaught;
         private bool tossing;
+        public bool Exploded { get; private set; }
         private float tossStart;
         private float tossFloor;
         private int tossHits;
@@ -251,6 +252,8 @@ namespace Gluttony
             lastGhostBeat = double.NegativeInfinity;
             introCaught = true;
             tossing = false;
+            Exploded = false;
+            sprite.transform.parent.gameObject.SetActive(true);
             if (looseFork != null)
                 looseFork.enabled = false;
             foreach (var ghost in ghosts)
@@ -456,10 +459,31 @@ namespace Gluttony
 
         private static float BeatsPerSecond => Conductor.Instance != null ? Conductor.Instance.Bpm / 60f : 2f;
 
+        public void Explode()
+        {
+            if (Exploded)
+                return;
+            SetControl(false);
+            Exploded = true;
+            Eating = false;
+            Sfx.Wind(0f);
+            Vector3 center = transform.position + Vector3.up * 0.4f;
+            sprite.transform.parent.gameObject.SetActive(false);
+            if (looseFork != null)
+                looseFork.enabled = false;
+            foreach (var ghost in ghosts)
+                ghost.enabled = false;
+            Fx.Ring(center, Palette.Red, 24, 10f);
+            Fx.Burst(center, Palette.Red, 30);
+            Fx.Burst(center, Palette.White, 12);
+            Fx.Sparks(center, 10);
+            Sfx.Play(SfxId.Explosion);
+        }
+
         private void Update()
         {
             float dt = Time.deltaTime;
-            if (dt <= 0f)
+            if (dt <= 0f || Exploded)
                 return;
 
             double beats = Beats;

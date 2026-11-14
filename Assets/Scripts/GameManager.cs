@@ -46,6 +46,8 @@ namespace Gluttony
         [SerializeField] private UnityEngine.UI.Image screenFade;
         [SerializeField] private Volume songTint;
         [SerializeField] private SongParty party;
+        [SerializeField] private DefeatScreen defeat;
+        [SerializeField] private Leaderboard leaderboard;
 
         [SerializeField] private float restartSeconds = 1.2f;
 
@@ -57,6 +59,7 @@ namespace Gluttony
         public string NowPlaying => normalRun && playing != null ? playing.songName : "";
         public bool TutorialActive => normalRun && playing != null && playing.ID == TutorialSongId;
         public int Checkpoints => checkpoints;
+        public bool DefeatShown => defeat != null && defeat.Visible;
 
         private bool hasJumped;
         private string currentSongId;
@@ -114,6 +117,7 @@ namespace Gluttony
             PickSong();
             PrepareWorld(Environment.TickCount);
             score.BeginRun(cat.transform.position.y, currentSongId);
+            leaderboard.Sync(currentSongId, true);
             cat.SetControl(false);
             SetState(GameState.Playing);
             ui.ShowHud();
@@ -169,6 +173,12 @@ namespace Gluttony
             Sfx.ResumeAll();
             cat.SetControl(!cat.InIntro);
             SetState(GameState.Playing);
+        }
+
+        public void Retry()
+        {
+            if (State == GameState.GameOver)
+                StartRun();
         }
 
         public void QuitToMenu()
@@ -391,7 +401,17 @@ namespace Gluttony
             Sfx.CancelScheduled();
             music.SetMood(MusicMood.Silent);
             score.Commit();
-            Sfx.Play(SfxId.Hurt);
+            if (fell)
+            {
+                Sfx.Play(SfxId.Hurt);
+            }
+            else
+            {
+                Sfx.StopAll();
+                skewer.Clear();
+                cat.Explode();
+                cameraRig.Shake(3, 0.3f);
+            }
             GameSettings.Vibrate();
             SetState(GameState.GameOver);
             StartCoroutine(RestartSoon());
@@ -400,8 +420,15 @@ namespace Gluttony
         private IEnumerator RestartSoon()
         {
             yield return new WaitForSecondsRealtime(restartSeconds);
-            if (State == GameState.GameOver)
+            if (State != GameState.GameOver)
+                yield break;
+            if (TutorialActive)
+            {
                 StartRun();
+                yield break;
+            }
+            var scored = SongStore.Find(library, currentSongId);
+            defeat.Show(score.Score, score.Best, score.NewBest, currentSongId, scored != null ? scored.songName : "");
         }
 
         private void SetState(GameState state)

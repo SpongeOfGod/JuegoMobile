@@ -15,6 +15,7 @@ namespace Gluttony
 
         public int Score => heightPoints + bonusPoints;
         public int Best { get; private set; }
+        public bool NewBest { get; private set; }
 
         private int heightPoints;
         private int bonusPoints;
@@ -36,6 +37,7 @@ namespace Gluttony
             climbed = 0f;
             heightPoints = 0;
             bonusPoints = 0;
+            NewBest = false;
             Best = PlayerPrefs.GetInt(bestKey, 0);
         }
 
@@ -66,6 +68,7 @@ namespace Gluttony
             if (Score <= Best)
                 return;
             Best = Score;
+            NewBest = true;
             PlayerPrefs.SetInt(bestKey, Best);
             PlayerPrefs.Save();
         }

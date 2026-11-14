@@ -5,9 +5,9 @@ namespace Gluttony
     [DefaultExecutionOrder(100)]
     public class Backdrop : MonoBehaviour
     {
-        private const float FarTile = 2f;
+        public const float FarTile = 2f;
         private const float WallTile = 2f;
-        private const float Parallax = 0.5f;
+        public const float Parallax = 0.5f;
         private const float PulseStrength = 0.35f;
         private const float FlashStrength = 0.5f;
         private const int AbyssDepth = 14;

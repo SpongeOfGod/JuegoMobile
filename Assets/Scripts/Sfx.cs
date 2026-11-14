@@ -224,6 +224,19 @@ namespace Gluttony
             }
         }
 
+        public static void StopAll()
+        {
+            if (instance == null)
+                return;
+
+            instance.pausedSounds.Clear();
+            foreach (SoundVoice voice in instance.voices)
+            {
+                voice.IsPaused = false;
+                voice.Stop();
+            }
+        }
+
         public static void CancelScheduled()
         {
             if (instance == null)

@@ -10,8 +10,11 @@ namespace Gluttony
         private const float StartScreenFraction = 0.2f;
         private const float SmoothTime = 0.15f;
         private const float BlastHoldBeats = 0.5f;
+        private const float CreepEasePerBeat = 0.01f;
 
         [SerializeField] private float[] creepPerBeat = { 0.11f, 0.17f, 0.22f, 0.28f, 0.34f };
+        [SerializeField] private float creepGrowthPerSection = 0.03f;
+        [SerializeField] private float maxCreepPerBeat = 0.46f;
 
         public Camera Camera { get; private set; }
         public float HalfHeight => Camera.orthographicSize;
@@ -24,6 +27,7 @@ namespace Gluttony
         private float preciseY;
         private float targetY;
         private float velocity;
+        private float creep = -1f;
         private int shakePixels;
         private float shakeUntil;
 
@@ -35,13 +39,27 @@ namespace Gluttony
             targetY = catY + HalfHeight * (1f - 2f * fraction);
             preciseY = targetY;
             velocity = 0f;
+            creep = CreepFor(0);
             Apply();
+        }
+
+        private float CreepFor(int section)
+        {
+            int last = creepPerBeat.Length - 1;
+            if (section <= last)
+                return creepPerBeat[Mathf.Max(0, section)];
+            return Mathf.Min(maxCreepPerBeat, creepPerBeat[last] + creepGrowthPerSection * (section - last));
         }
 
         private void LateUpdate()
         {
             float dt = Time.deltaTime;
             var cat = CatController.Instance;
+            if (cat != null && cat.Exploded)
+            {
+                Apply();
+                return;
+            }
             if (cat != null && cat.IsLaunching && Conductor.Instance != null)
             {
                 FollowLaunch(cat, Conductor.Instance.SongBeats);
@@ -66,8 +84,10 @@ namespace Gluttony
 
             if (Creeping && Conductor.Instance != null)
             {
-                float perBeat = creepPerBeat[Mathf.Clamp(Section, 0, creepPerBeat.Length - 1)];
-                targetY += perBeat * Conductor.Instance.Bpm / 60f * dt;
+                float beats = Conductor.Instance.Bpm / 60f * dt;
+                float goal = CreepFor(Section);
+                creep = creep < 0f ? goal : Mathf.MoveTowards(creep, goal, CreepEasePerBeat * beats);
+                targetY += creep * beats;
             }
 
             if (dt > 0f)

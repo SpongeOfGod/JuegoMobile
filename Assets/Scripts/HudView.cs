@@ -72,6 +72,12 @@ namespace Gluttony
             var game = GameManager.Instance;
             if (game != null)
                 songLabel.Text = game.NowPlaying;
+            bool showScore = game == null || !game.DefeatShown;
+            if (scoreText.enabled != showScore)
+            {
+                scoreText.enabled = showScore;
+                bestText.enabled = showScore;
+            }
             bool paused = game != null && game.State == GameState.Paused;
             bool dim = paused && Mathf.Repeat(Time.unscaledTime * 2f, 1f) >= 0.5f;
             pauseButton.targetGraphic.color = dim ? new Color(1f, 1f, 1f, 0.25f) : Color.white;
