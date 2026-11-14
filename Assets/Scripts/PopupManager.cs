@@ -31,7 +31,7 @@ namespace Gluttony
         public static PopupManager Instance { get; private set; }
 
         [SerializeField] private FloatingText prefab;
-        [SerializeField] private string recordText = "RÉCORD {0}";
+        [SerializeField] private string recordText = "RÉCORD: {0}";
         [SerializeField] private float seconds = 1f;
         [SerializeField] private float risePixelsPerSecond = 24f;
         [SerializeField] private PopupStyle[] popups = new PopupStyle[0];

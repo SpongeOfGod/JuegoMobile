@@ -70,7 +70,7 @@ namespace Gluttony
             songId = id;
             runScore = score;
             scoreLabel.Text = score.ToString(CultureInfo.InvariantCulture);
-            recordLabel.Text = newRecord ? "¡NUEVO RÉCORD!" : "RÉCORD " + record.ToString(CultureInfo.InvariantCulture);
+            recordLabel.Text = newRecord ? "¡NUEVO RÉCORD!" : "RÉCORD: " + record.ToString(CultureInfo.InvariantCulture);
             boardTitle.Text = "RANKING (" + songName + "):";
             StopTyping();
             RefreshName();

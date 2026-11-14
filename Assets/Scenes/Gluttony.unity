@@ -1152,7 +1152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 5481644168035498871, guid: 57df3264f734afe4e892b9bf87d0de2b, type: 3}
-  recordText: "R\xC9CORD {0}"
+  recordText: "R\xC9CORD: {0}"
   seconds: 1
   risePixelsPerSecond: 24
   popups:
