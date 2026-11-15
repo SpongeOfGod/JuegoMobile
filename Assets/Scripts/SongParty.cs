@@ -174,10 +174,11 @@ namespace Gluttony
             screen.SetVector(GridId, new Vector4(rig.Width, rig.Height, 0f, 0f));
             screenOn = true;
 
+            float clipBeat = Mathf.Repeat((float)conductor.ClipBeats, clipBeats);
             if (effects == SongEffects.Party)
-                Party(Mathf.Repeat((float)conductor.ClipBeats, clipBeats));
+                Party(clipBeat);
             else
-                ShoppingChannel(Mathf.Repeat((float)conductor.ClipBeats, clipBeats));
+                ShoppingChannel(clipBeat);
 
             for (int i = used; i < shownCount; i++)
                 sprites[i].enabled = false;
@@ -286,9 +287,12 @@ namespace Gluttony
             int fall = halfHeight * 2 + 8;
             for (int i = 0; i < CoinCount; i++)
             {
-                int y = halfHeight - Mathf.FloorToInt(Mathf.Repeat(beat * (14f + Noise(i * 3) * 10f) + Noise(i) * fall + scroll, fall));
+                float depth = Depth(i + 200);
+                float speed = (5f + Noise(i * 3) * 5f) + 14f * depth;
+                int y = halfHeight - Mathf.FloorToInt(Mathf.Repeat(beat * speed + Noise(i) * fall + scroll * depth, fall));
                 int x = Mathf.RoundToInt((Noise(i * 7) * 2f - 1f) * halfWidth);
-                Put(coinFrames[(Mathf.FloorToInt(beat * 2f) + i) % coinFrames.Length], x - 3, y);
+                float shade = Mathf.Lerp(0.4f, 1f, Mathf.InverseLerp(FarDepth, NearDepth, depth));
+                Put(coinFrames[(Mathf.FloorToInt(beat * 2f) + i) % coinFrames.Length], x - 3, y, new Color(shade, shade, shade, 1f));
             }
         }
 

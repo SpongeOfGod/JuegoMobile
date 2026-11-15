@@ -20,6 +20,7 @@ namespace Gluttony
     public class CatInput : MonoBehaviour
     {
         public const int MousePointerId = 1000;
+        public const int KeyboardPointerId = 1001;
 
         [SerializeField] private float swipeDistance = 0.04f;
         [SerializeField] private float swipeSeconds = 0.25f;
@@ -81,6 +82,7 @@ namespace Gluttony
 
         private void Update()
         {
+            UpdateKeyboard();
 #if UNITY_EDITOR || UNITY_STANDALONE
             var mouse = Mouse.current;
             if (mouse != null && Touch.activeTouches.Count == 0)
@@ -94,6 +96,52 @@ namespace Gluttony
                     PointerUp(MousePointerId, pos);
             }
 #endif
+        }
+
+        private void UpdateKeyboard()
+        {
+            var keyboard = Keyboard.current;
+            if (keyboard == null)
+                return;
+            if (keyboard.aKey.wasPressedThisFrame || keyboard.leftArrowKey.wasPressedThisFrame)
+                KeySwipe(-1);
+            if (keyboard.dKey.wasPressedThisFrame || keyboard.rightArrowKey.wasPressedThisFrame)
+                KeySwipe(1);
+            bool jumpPressed = keyboard.spaceKey.wasPressedThisFrame || keyboard.wKey.wasPressedThisFrame || keyboard.upArrowKey.wasPressedThisFrame
+                || keyboard.sKey.wasPressedThisFrame || keyboard.downArrowKey.wasPressedThisFrame;
+            bool jumpHeld = keyboard.spaceKey.isPressed || keyboard.wKey.isPressed || keyboard.upArrowKey.isPressed
+                || keyboard.sKey.isPressed || keyboard.downArrowKey.isPressed;
+            if (jumpPressed)
+                KeyHoldDown();
+            else if (!jumpHeld)
+                KeyHoldUp();
+        }
+
+        private void KeySwipe(int direction)
+        {
+            if (InputEnabled)
+                Swiped?.Invoke(direction);
+        }
+
+        private void KeyHoldDown()
+        {
+            if (!InputEnabled || primaryId != -1)
+                return;
+            primaryId = KeyboardPointerId;
+            PressedAt = Time.realtimeSinceStartup;
+            Current = Gesture.Hold;
+            Pressed?.Invoke();
+        }
+
+        private void KeyHoldUp()
+        {
+            if (primaryId != KeyboardPointerId)
+                return;
+            var gesture = Current;
+            primaryId = -1;
+            Current = Gesture.None;
+            if (InputEnabled && gesture == Gesture.Hold)
+                HoldReleased?.Invoke();
         }
 
         public void PointerDown(int id, Vector2 screenPos)

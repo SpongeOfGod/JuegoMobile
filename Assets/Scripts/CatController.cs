@@ -465,6 +465,9 @@ namespace Gluttony
                 return;
             SetControl(false);
             Exploded = true;
+            ChargeShown = false;
+            if (chargeBar != null)
+                chargeBar.SetActive(false);
             Eating = false;
             Sfx.Wind(0f);
             Vector3 center = transform.position + Vector3.up * 0.4f;
@@ -1200,26 +1203,39 @@ namespace Gluttony
                 sprite.transform.localPosition = new Vector3(shake * Unit, 0f, 0f);
             }
 
-            if (chargeBar == null)
-                return;
             bool missed = beats < missUntil;
             bool held = Input.Holding && Time.realtimeSinceStartup - Input.PressedAt >= ChargeBarDelay;
-            bool show = Grounded && ControlEnabled && !Eating && (held || JumpQueued || missed);
-            chargeBar.SetActive(show);
-            if (!show)
-                return;
+            ChargeShown = Grounded && ControlEnabled && !Eating && (held || JumpQueued || missed) && !Exploded;
             bool ready = InReleaseWindow || JumpQueued;
             bool blink = Math.Floor(beats * 8.0) % 2 == 0;
             bool fresh = beats - lastVisualTick < 0.12;
+            ChargeLit = missed ? 0 : ChargeLevel;
+            ChargeFlashAll = ready && blink;
+            ChargeFlashLast = !ready && fresh;
+            ChargeFrameRed = missed || (ready && blink);
+
+            if (chargeBar == null)
+                return;
+            bool show = ChargeShown && GameSettings.LegacyChargeBar;
+            chargeBar.SetActive(show);
+            if (!show)
+                return;
             for (int i = 0; i < chargeSegments.Length; i++)
             {
                 var segment = chargeSegments[i];
-                segment.enabled = !missed && i < ChargeLevel;
-                bool white = ready ? blink : fresh && i == ChargeLevel - 1;
-                segment.color = white ? Palette.White : Palette.Red;
+                segment.enabled = i < ChargeLit;
+                segment.color = ChargeSegmentWhite(i) ? Palette.White : Palette.Red;
             }
-            chargeFrame.color = missed || (ready && blink) ? Palette.Red : Palette.White;
+            chargeFrame.color = ChargeFrameRed ? Palette.Red : Palette.White;
         }
+
+        public bool ChargeShown { get; private set; }
+        public int ChargeLit { get; private set; }
+        public bool ChargeFrameRed { get; private set; }
+        private bool ChargeFlashAll { get; set; }
+        private bool ChargeFlashLast { get; set; }
+
+        public bool ChargeSegmentWhite(int index) => ChargeFlashAll || (ChargeFlashLast && index == ChargeLevel - 1);
 
         private Sprite FeedSprite(MouthState mouth)
         {

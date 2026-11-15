@@ -14,6 +14,7 @@ namespace Gluttony
         [SerializeField] private Sprite[] livesSprites;
         [SerializeField] private Sprite[] greenLivesSprites;
         [SerializeField] private Button pauseButton;
+        [SerializeField] private GameObject pauseShade;
         [SerializeField] private Button menuButton;
         [SerializeField] private Button settingsButton;
         [SerializeField] private PixelLabel songLabel;
@@ -81,6 +82,8 @@ namespace Gluttony
             bool paused = game != null && game.State == GameState.Paused;
             bool dim = paused && Mathf.Repeat(Time.unscaledTime * 2f, 1f) >= 0.5f;
             pauseButton.targetGraphic.color = dim ? new Color(1f, 1f, 1f, 0.25f) : Color.white;
+            if (pauseShade.activeSelf != paused)
+                pauseShade.SetActive(paused);
             if (menuButton.gameObject.activeSelf != paused)
             {
                 menuButton.gameObject.SetActive(paused);

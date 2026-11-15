@@ -13,6 +13,8 @@ namespace Gluttony
         [SerializeField] private Button closeButton;
         [SerializeField] private Button vibrationButton;
         [SerializeField] private PixelLabel vibrationValue;
+        [SerializeField] private Button chargeBarButton;
+        [SerializeField] private PixelLabel chargeBarValue;
         [SerializeField] private Button eraseButton;
         [SerializeField] private PixelLabel eraseLabel;
 
@@ -24,6 +26,7 @@ namespace Gluttony
             openButton.onClick.AddListener(Open);
             closeButton.onClick.AddListener(Close);
             vibrationButton.onClick.AddListener(ToggleVibration);
+            chargeBarButton.onClick.AddListener(ToggleChargeBar);
             eraseButton.onClick.AddListener(Erase);
             gameObject.SetActive(false);
         }
@@ -48,6 +51,12 @@ namespace Gluttony
             Refresh();
         }
 
+        private void ToggleChargeBar()
+        {
+            GameSettings.LegacyChargeBar = !GameSettings.LegacyChargeBar;
+            Refresh();
+        }
+
         private void Erase()
         {
             if (Time.unscaledTime > confirmUntil)
@@ -66,6 +75,7 @@ namespace Gluttony
         private void Refresh()
         {
             vibrationValue.Text = GameSettings.Vibration ? "SÍ" : "NO";
+            chargeBarValue.Text = GameSettings.LegacyChargeBar ? "LEGACY" : "DEFAULT";
             eraseLabel.Text = EraseText;
         }
 
